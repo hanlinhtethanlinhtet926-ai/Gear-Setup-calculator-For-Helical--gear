@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="app-title-key">Helical Gear Calculator</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+        }
+        .card {
+            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 4px, 6px, 0.05);
+        }
+        /* Custom styling for non-Latin fonts for better readability */
+        .myanmar-text {
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen flex items-center justify-center">
+
+    <div id="app" class="w-full max-w-2xl bg-white p-6 md:p-10 rounded-xl card border-t-4 border-indigo-600">
+        
+        <!-- Language Selector -->
+        <div class="mb-6 flex justify-end">
+             <label for="language-select" class="text-sm font-medium text-gray-700 mr-2" data-lang-key="lang_label">Select Language:</label>
+            <select id="language-select" onchange="changeLanguage(this.value)" class="px-2 py-1 border border-gray-300 rounded-lg shadow-sm text-sm">
+                <option value="en">English</option>
+                <option value="my">Myanmar (မြန်မာ)</option>
+                <option value="th">Thailand (ไทย)</option>
+                <option value="ru">Russia (Русский)</option>
+                <option value="mn">Mongolia (Монгол)</option>
+                <option value="es">Spain (Español)</option>
+                <option value="fr">French (Français)</option>
+                <option value="zh">China (中文)</option>
+                <option value="hi">India (हिन्दी)</option>
+                <option value="nl">Netherlands (Nederlands)</option>
+                <option value="pt">Portugal (Português)</option>
+                <option value="sr">Serbia (Српски)</option>
+                <option value="uk">Ukraine (Українська)</option>
+                <option value="ar">Arabic (العربية)</option>
+                <option value="ja">Japan (日本語)</option>
+                <option value="ko">Korea (한국어)</option>
+                <option value="de">Switzerland (Deutsch)</option>
+                <option value="pl">Poland (Polski)</option>
+                <option value="no">Norway (Norsk)</option>
+            </select>
+        </div>
+
+        <h1 class="text-3xl font-extrabold text-indigo-800 mb-2" data-lang-key="title">
+            Helical Gear Calculator
+        </h1>
+        <p class="text-gray-600 mb-8 myanmar-text" data-lang-key="subtitle">
+            Enter your machine specifications and desired lead to calculate the change gears.
+        </p>
+
+        <!-- Input Form -->
+        <div class="space-y-6">
+            
+            <div>
+                <label for="lead" class="block text-sm font-medium text-gray-700" data-lang-key="input_1_label">
+                    1. Desired Helix Length (Lead, L) - (mm)
+                </label>
+                <input type="number" id="lead" value="56.0" step="0.1"
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
+                       placeholder="Ex: 56.0">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="pitch" class="block text-sm font-medium text-gray-700" data-lang-key="input_2_label">
+                        2. Leadscrew Pitch ($P_{\text{L}}$) - (mm)
+                    </label>
+                    <input type="number" id="pitch" value="4.5" step="0.1"
+                           class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
+                           placeholder="Ex: 4.5">
+                </div>
+
+                <div>
+                    <label for="ratio" class="block text-sm font-medium text-gray-700" data-lang-key="input_3_label">
+                        3. Dividing Head Ratio ($R_{\text{DH}}$)
+                    </label>
+                    <input type="number" id="ratio" value="40"
+                           class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
+                           placeholder="Ex: 40">
+                </div>
+            </div>
+
+            <button onclick="calculate()" id="calculate-button"
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out mt-4"
+                    data-lang-key="button_calculate">
+                Calculate Gears
+            </button>
+        </div>
+
+        <!-- Result Area -->
+        <div id="result" class="mt-8 pt-6 border-t border-gray-200 hidden">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 flex justify-between items-center">
+                <span data-lang-key="result_title">Calculation Results</span>
+                <span id="setup-counter" class="text-base font-medium text-indigo-600 bg-indigo-100 px-3 py-1 rounded-full">
+                    Setup 1 / 0
+                </span>
+            </h2>
+            <p>    <p>Gear A = Leadscrew<br>
+       Gear B = Driven Gear1<br>
+       Gear C = Intermediate<br>
+       Gear D = Spindle/stud gear
+
+    </p></p>
+            
+            <!-- Key Figures -->
+            <div class="bg-indigo-50 p-4 rounded-lg mb-6 border border-indigo-200">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <p class="text-indigo-800 myanmar-text">
+                        <span class="font-semibold" data-lang-key="cm_label">Machine Lead Constant ($C_{\text{m}}$):</span> 
+                        <span id="cm-output" class="font-extrabold"></span>
+                    </p>
+                    <p class="text-indigo-800 myanmar-text">
+                        <span class="font-semibold" data-lang-key="target_ratio_label">Target Ratio:</span> 
+                        <span id="target-ratio-output" class="font-extrabold"></span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Gear Setup Table -->
+            <h3 class="text-xl font-semibold text-gray-800 mb-3 myanmar-text" data-lang-key="gear_setup_title">
+                Optimal Gear Set (B × A / D × C)
+            </h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 rounded-lg overflow-hidden border">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider myanmar-text" data-lang-key="gear_col_1">
+                                Gear
+                            </th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider myanmar-text" data-lang-key="gear_col_2">
+                                Role
+                            </th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider myanmar-text" data-lang-key="gear_col_3">
+                                Teeth (Z)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200 text-sm myanmar-text">
+                        <tr>
+                            <td class="px-3 py-2 whitespace-nowrap font-bold text-gray-900">B</td>
+                            <td class="px-3 py-2 whitespace-nowrap text-green-600" data-lang-key="driven">Driven 1</td>
+                            <td id="gear-b" class="px-3 py-2 whitespace-nowrap font-extrabold text-lg text-indigo-700">--</td>
+                        </tr>
+                        <tr>
+                            <td class="px-3 py-2 whitespace-nowrap font-bold text-gray-900">A</td>
+                            <td class="px-3 py-2 whitespace-nowrap text-green-600" data-lang-key="driven">Driven 2</td>
+                            <td id="gear-a" class="px-3 py-2 whitespace-nowrap font-extrabold text-lg text-indigo-700">--</td>
+                        </tr>
+                        <tr>
+                            <td class="px-3 py-2 whitespace-nowrap font-bold text-gray-900">D</td>
+                            <td class="px-3 py-2 whitespace-nowrap text-red-600" data-lang-key="driver">Driver 1</td>
+                            <td id="gear-d" class="px-3 py-2 whitespace-nowrap font-extrabold text-lg text-indigo-700">--</td>
+                        </tr>
+                        <tr>
+                            <td class="px-3 py-2 whitespace-nowrap font-bold text-gray-900">C</td>
+                            <td class="px-3 py-2 whitespace-nowrap text-red-600" data-lang-key="driver">Driver 2</td>
+                            <td id="gear-c" class="px-3 py-2 whitespace-nowrap font-extrabold text-lg text-indigo-700">--</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Accuracy Summary -->
+            <div class="mt-4 p-3 bg-yellow-50 rounded-lg text-sm border border-yellow-200">
+                <p class="font-semibold text-yellow-800 myanmar-text">
+                    <span class="text-gray-800 font-bold" data-lang-key="actual_ratio_label">Actual Ratio:</span> 
+                    <span id="actual-ratio-output" class="font-extrabold">--</span>
+                </p>
+                <p class="font-semibold text-yellow-800 myanmar-text">
+                    <span class="text-gray-800 font-bold" data-lang-key="actual_lead_label">Actual Lead ($L_{\text{Actual}}$):</span> 
+                    <span id="actual-lead-output" class="font-extrabold">--</span>
+                </p>
+                <p class="text-red-700 myanmar-text mt-1">
+                    <span class="font-bold" data-lang-key="error_label">Error:</span> 
+                    <span id="error-output" class="font-extrabold">--</span>
+                </p>
+            </div>
+            
+            <!-- Navigation Buttons -->
+            <div class="mt-4 flex space-x-4">
+                <button id="prev-setup-button" onclick="previousSetup()" disabled
+                        class="flex-1 flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-150 ease-in-out opacity-50 cursor-not-allowed"
+                        data-lang-key="previous_setup">
+                    Previous Setup
+                </button>
+                <button id="next-setup-button" onclick="nextSetup()" disabled
+                        class="flex-1 flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out opacity-50 cursor-not-allowed"
+                        data-lang-key="next_setup">
+                    Next Setup
+                </button>
+            </div>
+            
+            <div id="error-message" class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg hidden myanmar-text" data-lang-key="error_message">
+                Invalid input values. Please check the inputs.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state for storing all possible gear combinations and the current index
+        let allCombinations = [];
+        let currentSetupIndex = 0;
+        
+        // Standard Change Gears (Commonly available even-numbered gears)
+        const STANDARD_GEARS = [
+           20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 84, 86, 90, 100, 120
+        ];
+
+        // --- Translation Data ---
+        const TRANSLATIONS = {
+            'my': {
+                title: "ဟေလစ်ဂီယာ တွက်ချက်ရေးကိရိယာ",
+                subtitle: "သင့်စက်၏ သတ်မှတ်ချက်များနှင့် လိုချင်သော Lead ကို ထည့်သွင်းတွက်ချက်ပါ။",
+                lang_label: "ဘာသာစကား ရွေးချယ်ရန်:",
+                input_1_label: "၁။ လိုချင်သော Helix Length (Lead, L) - (mm)",
+                input_2_label: "၂။ Leadscrew Pitch ($P_{\\text{L}}$) - (mm)",
+                input_3_label: "၃။ Dividing Head Ratio ($R_{\\text{DH}}$)",
+                button_calculate: "ဂီယာ တွက်ချက်မည်",
+                result_title: "တွက်ချက်ရလဒ် (Calculation Results)",
+                setup_counter: "Setup",
+                cm_label: "Machine Lead Constant ($C_{\\text{m}}$):",
+                target_ratio_label: "Target Ratio:",
+                gear_setup_title: "အသင့်တော်ဆုံး ဂီယာအတွဲ (B × A / D × C)",
+                gear_col_1: "ဂီယာ",
+                gear_col_2: "နေရာ (Role)",
+                gear_col_3: "သွားအရေအတွက် (Z)",
+                driven: "Driven 1 (မောင်းနှင်ခံ)",
+                driver: "Driver 1 (မောင်းသူ)",
+                actual_ratio_label: "ရရှိသော အချိုး (Actual Ratio):",
+                actual_lead_label: "ရရှိသော Lead ($L_{\\text{Actual}}$):",
+                error_label: "တိကျမှု ကွာဟချက် (Error):",
+                next_setup: "Next Setup",
+                previous_setup: "Previous Setup", // Added
+                no_more_setups: "No More Setups (End)",
+                error_message: "ထည့်သွင်းမှု တန်ဖိုးများ မှားယွင်းနေပါသည်။ ကျေးဇူးပြု၍ တန်ဖိုးများကို စစ်ဆေးပါ။",
+                example: "ဥပမာ:",
+            },
+            'en': {
+                title: "Helical Gear Calculator",
+                subtitle: "Enter your machine specifications and desired lead to calculate the change gears.",
+                lang_label: "Select Language:",
+                input_1_label: "1. Desired Helix Length (Lead, L) - (mm)",
+                input_2_label: "2. Leadscrew Pitch ($P_{\\text{L}}$) - (mm)",
+                input_3_label: "3. Dividing Head Ratio ($R_{\\text{DH}}$)",
+                button_calculate: "Calculate Gears",
+                result_title: "Calculation Results",
+                setup_counter: "Setup",
+                cm_label: "Machine Lead Constant ($C_{\\text{m}}$):",
+                target_ratio_label: "Target Ratio:",
+                gear_setup_title: "Optimal Gear Set (B × A / D × C)",
+                gear_col_1: "Gear",
+                gear_col_2: "Role",
+                gear_col_3: "Teeth (Z)",
+                driven: "Driven 1",
+                driver: "Driver 1",
+                actual_ratio_label: "Actual Ratio:",
+                actual_lead_label: "Actual Lead ($L_{\\text{Actual}}$):",
+                error_label: "Error:",
+                next_setup: "Next Setup",
+                previous_setup: "Previous Setup", // Added
+                no_more_setups: "No More Setups (End)",
+                error_message: "Invalid input values. Please check the inputs.",
+                example: "Ex:",
+            },
+            'th': {
+                title: "เครื่องคำนวณเกียร์เฮลิคอล",
+                subtitle: "ป้อนข้อมูลจำเพาะของเครื่องจักรและระยะนำที่คุณต้องการเพื่อคำนวณเกียร์เปลี่ยน.",
+                lang_label: "เลือกภาษา:",
+                input_1_label: "1. ความยาวเกลียวที่ต้องการ (Lead, L) - (มม.)",
+                input_2_label: "2. ระยะพิทช์สกรูนำ ($P_{\\text{L}}$) - (มม.)",
+                input_3_label: "3. อัตราส่วนหัวแบ่ง ($R_{\\text{DH}}$)",
+                button_calculate: "คำนวณเกียร์",
+                result_title: "ผลการคำนวณ",
+                setup_counter: "ชุด",
+                cm_label: "ค่าคงที่นำของเครื่องจักร ($C_{\\text{m}}$):",
+                target_ratio_label: "อัตราส่วนเป้าหมาย:",
+                gear_setup_title: "ชุดเกียร์ที่เหมาะสมที่สุด (B × A / D × C)",
+                gear_col_1: "เกียร์",
+                gear_col_2: "บทบาท",
+                gear_col_3: "ฟัน (Z)",
+                driven: "ขับตาม 1",
+                driver: "ขับเคลื่อน 1",
+                actual_ratio_label: "อัตราส่วนจริง:",
+                actual_lead_label: "ระยะนำจริง ($L_{\\text{Actual}}$):",
+                error_label: "ข้อผิดพลาด:",
+                next_setup: "ชุดถัดไป",
+                previous_setup: "ชุดก่อนหน้า", // Added
+                no_more_setups: "ไม่มีชุดเพิ่มเติม (สิ้นสุด)",
+                error_message: "ค่าอินพุตไม่ถูกต้อง กรุณาตรวจสอบ.",
+                example: "ตัวอย่าง:",
+            },
+            'ru': {
+                title: "Калькулятор винтовых шестерен",
+                subtitle: "Введите характеристики станка и желаемый шаг для расчета сменных шестерен.",
+                lang_label: "Выберите язык:",
+                input_1_label: "1. Требуемая длина витка (Шаг, L) - (мм)",
+                input_2_label: "2. Шаг ходового винта ($P_{\\text{L}}$) - (мм)",
+                input_3_label: "3. Передаточное число делительной головки ($R_{\\text{DH}}$)",
+                button_calculate: "Рассчитать шестерни",
+                result_title: "Результаты расчета",
+                setup_counter: "Настройка",
+                cm_label: "Постоянная подачи станка ($C_{\\text{m}}$):",
+                target_ratio_label: "Целевое соотношение:",
+                gear_setup_title: "Оптимальный набор шестерен (B × A / D × C)",
+                gear_col_1: "Шестерня",
+                gear_col_2: "Роль",
+                gear_col_3: "Зубья (Z)",
+                driven: "Ведомая 1",
+                driver: "Ведущая 1",
+                actual_ratio_label: "Фактическое соотношение:",
+                actual_lead_label: "Фактический шаг ($L_{\\text{Actual}}$):",
+                error_label: "Ошибка:",
+                next_setup: "Следующая настройка",
+                previous_setup: "Предыдущая настройка", // Added
+                no_more_setups: "Больше настроек нет (Конец)",
+                error_message: "Неверные входные значения. Пожалуйста, проверьте ввод.",
+                example: "Пример:",
+            },
+            'mn': {
+                title: "Спираль араа тооцоолуур",
+                subtitle: "Машины үзүүлэлт болон хүссэн шатны утгыг оруулж, солих арааг тооцоолно уу.",
+                lang_label: "Хэл сонгох:",
+                input_1_label: "1. Хүссэн спираль урт (Алхам, L) - (мм)",
+                input_2_label: "2. Удирдах боолтны алхам ($P_{\\text{L}}$) - (мм)",
+                input_3_label: "3. Хуваах толгойн харьцаа ($R_{\\text{DH}}$)",
+                button_calculate: "Араа тооцоолох",
+                result_title: "Тооцооллын үр дүн",
+                setup_counter: "Тохиргоо",
+                cm_label: "Машины удирдлагын тогтмол ($C_{\\text{m}}$):",
+                target_ratio_label: "Зорилтот харьцаа:",
+                gear_setup_title: "Хамгийн оновчтой арааны багц (B × A / D × C)",
+                gear_col_1: "Араа",
+                gear_col_2: "Үүрэг",
+                gear_col_3: "Шүд (Z)",
+                driven: "Хөтлөгдөх 1",
+                driver: "Хөтлөх 1",
+                actual_ratio_label: "Бодит харьцаа:",
+                actual_lead_label: "Бодит алхам ($L_{\\text{Actual}}$):",
+                error_label: "Алдаа:",
+                next_setup: "Дараагийн тохиргоо",
+                previous_setup: "Өмнөх тохиргоо", // Added
+                no_more_setups: "Цаашид тохиргоо байхгүй (Төгсгөл)",
+                error_message: "Оролтын утгууд буруу байна. Оролтуудыг шалгана уу.",
+                example: "Жишээ:",
+            },
+            'es': {
+                title: "Calculadora de Engranajes Helicoidales",
+                subtitle: "Ingrese las especificaciones de su máquina y el avance deseado para calcular los engranajes de cambio.",
+                lang_label: "Seleccionar idioma:",
+                input_1_label: "1. Longitud de Hélice Deseada (Avance, L) - (mm)",
+                input_2_label: "2. Paso del Tornillo de Avance ($P_{\\text{L}}$) - (mm)",
+                input_3_label: "3. Relación del Cabezal Divisor ($R_{\\text{DH}}$)",
+                button_calculate: "Calcular Engranajes",
+                result_title: "Resultados del Cálculo",
+                setup_counter: "Configuración",
+                cm_label: "Constante de Avance de la Máquina ($C_{\\text{m}}$):",
+                target_ratio_label: "Relación Objetivo:",
+                gear_setup_title: "Juego de Engranajes Óptimo (B × A / D × C)",
+                gear_col_1: "Engranaje",
+                gear_col_2: "Rol",
+                gear_col_3: "Dientes (Z)",
+                driven: "Impulsado 1",
+                driver: "Conductor 1",
+                actual_ratio_label: "Relación Real:",
+                actual_lead_label: "Avance Real ($L_{\\text{Actual}}$):",
+                error_label: "Error:",
+                next_setup: "Siguiente Configuración",
+                previous_setup: "Configuración Anterior", // Added
+                no_more_setups: "No hay más configuraciones (Fin)",
+                error_message: "Valores de entrada no válidos. Por favor, compruebe las entradas.",
+                example: "Ejemplo:",
+            },
+            'fr': {
+                title: "Calculateur d'Engrenages Hélicoïdaux",
+                subtitle: "Entrez les spécifications de votre machine et le pas désiré pour calculer les engrenages de changement.",
+                lang_label: "Sélectionner la langue:",
+                input_1_label: "1. Longueur d'Hélice Désirée (Pas, L) - (mm)",
+                input_2_label: "2. Pas de la Vis Mère ($P_{\\text{L}}$) - (mm)",
+                input_3_label: "3. Rapport de la Tête Diviseuse ($R_{\\text{DH}}$)",
+                button_calculate: "Calculer les Engrenages",
+                result_title: "Résultats du Calcul",
+                setup_counter: "Configuration",
+                cm_label: "Constante de la Machine ($C_{\\text{m}}$):",
+                target_ratio_label: "Rapport Cible:",
+                gear_setup_title: "Jeu d'Engrenages Optimal (B × A / D × C)",
+                gear_col_1: "Engrenage",
+                gear_col_2: "Rôle",
+                gear_col_3: "Dents (Z)",
+                driven: "Mené 1",
+                driver: "Moteur 1",
+                actual_ratio_label: "Rapport Réel:",
+                actual_lead_label: "Pas Réel ($L_{\\text{Actual}}$):",
+                error_label: "Erreur:",
+                next_setup: "Configuration Suivante",
+                previous_setup: "Configuration Précédente", // Added
+                no_more_setups: "Plus de configurations (Fin)",
+                error_message: "Valeurs d'entrée non valides. Veuillez vérifier les entrées.",
+                example: "Exemple:",
+            },
+            'zh': {
+                title: "斜齿轮计算器",
+                subtitle: "输入您的机床规格和所需导程，计算换挡齿轮。",
+                lang_label: "选择语言:",
+                input_1_label: "1. 预期螺旋长度 (导程, L) - (mm)",
+                input_2_label: "2. 导螺杆螺距 ($P_{\\text{L}}$) - (mm)",
+                input_3_label: "3. 分度头比率 ($R_{\\text{DH}}$)",
+                button_calculate: "计算齿轮",
+                result_title: "计算结果",
+                setup_counter: "设置",
+                cm_label: "机床导程常数 ($C_{\\text{m}}$):",
+                target_ratio_label: "目标比率:",
+                gear_setup_title: "最佳齿轮组 (B × A / D × C)",
+                gear_col_1: "齿轮",
+                gear_col_2: "角色",
+                gear_col_3: "齿数 (Z)",
+                driven: "从动 1",
+                driver: "主动 1",
+                actual_ratio_label: "实际比率:",
+                actual_lead_label: "实际导程 ($L_{\\text{Actual}}$):",
+                error_label: "误差:",
+                next_setup: "下一设置",
+                previous_setup: "上一设置", // Added
+                no_more_setups: "没有更多设置 (结束)",
+                error_message: "输入值无效。请检查输入。",
+                example: "例如:",
+            },
+            'hi': {
+                title: "हेलिकल गियर कैलकुलेटर",
+                subtitle: "बदलने वाले गियरों की गणना के लिए अपनी मशीन के विनिर्देशों और वांछित लीड दर्ज करें।",
+                lang_label: "भाषा चुनें:",
+                input_1_label: "1. वांछित हेलिक्स लंबाई (लीड, L) - (मिमी)",
+                input_2_label: "2. लीड स्क्रू पिच ($P_{\\text{L}}$) - (मिमी)",
+                input_3_label: "3. डिवाइडिंग हेड अनुपात ($R_{\\text{DH}}$)",
+                button_calculate: "गियरों की गणना करें",
+                result_title: "गणना परिणाम",
+                setup_counter: "सेटअप",
+                cm_label: "मशीन लीड स्थिरांक ($C_{\\text{m}}$):",
+                target_ratio_label: "लक्ष्य अनुपात:",
+                gear_setup_title: "इष्टतम गियर सेट (B × A / D × C)",
+                gear_col_1: "गियर",
+                gear_col_2: "भूमिका",
+                gear_col_3: "दांत (Z)",
+                driven: "चालित 1",
+                driver: "चालक 1",
+                actual_ratio_label: "वास्तविक अनुपात:",
+                actual_lead_label: "वास्तविक लीड ($L_{\\text{Actual}}$):",
+                error_label: "त्रुटि:",
+                next_setup: "अगला सेटअप",
+                previous_setup: "पिछला सेटअप", // Added
+                no_more_setups: "और सेटअप नहीं (समाप्त)",
+                error_message: "अमान्य इनपुट मान। कृपया इनपुट जांचें।",
+                example: "उदाहरण:",
+            },
+            'nl': {
+                title: "Helische Tandwielcalculator",
+                subtitle: "Voer de specificaties van uw machine en de gewenste spoed in om de wisselwielen te berekenen.",
+                lang_label: "Selecteer Taal:",
+                input_1_label: "1. Gewenste Helix Lengte (Spoed, L) - (mm)",
+                input_2_label: "2. Spoed van de Hoofdspindel ($P_{\\text{L}}$) - (mm)",
+                input_3_label: "3. Overbrengingsverhouding Verdeelkop ($R_{\\text{DH}}$)",
+                button_calculate: "Bereken Tandwielen",
+                result_title: "Berekeningsresultaten",
+                setup_counter: "Opstelling",
+                cm_label: "Machine Spoedconstante ($C_{\\text{m}}$):",
+                target_ratio_label: "Doelverhouding:",
+                gear_setup_title: "Optimale Tandwielset (B × A / D × C)",
+                gear_col_1: "Tandwiel",
+                gear_col_2: "Rol",
+                gear_col_3: "Tanden (Z)",
+                driven: "Gedreven 1",
+                driver: "Aandrijvend 1",
+                actual_ratio_label: "Werkelijke Verhouding:",
+                actual_lead_label: "Werkelijke Spoed ($L_{\\text{Actual}}$):",
+                error_label: "Fout:",
+                next_setup: "Volgende Opstelling",
+                previous_setup: "Vorige Opstelling", // Added
+                no_more_setups: "Geen Opstellingen Meer (Einde)",
+                error_message: "Ongeldige invoerwaarden. Controleer de invoer.",
+                example: "Bv:",
+            },
+            'pt': {
+                title: "Calculadora de Engrenagens Helicoidais",
+                subtitle: "Insira as especificações da máquina e o passo desejado para calcular as rodas de mudança.",
+                lang_label: "Selecionar Idioma:",
+                input_1_label: "1. Comprimento da Hélice Desejada (Passo, L) - (mm)",
+                input_2_label: "2. Passo do Fuso de Avanço ($P_{\\text{L}}$) - (mm)",
+                input_3_label: "3. Relação da Cabeça Divisora ($R_{\\text{DH}}$)",
+                button_calculate: "Calcular Rodas",
+                result_title: "Resultados do Cálculo",
+                setup_counter: "Configuração",
+                cm_label: "Constante de Avance da Máquina ($C_{\\text{m}}$):",
+                target_ratio_label: "Relação Alvo:",
+                gear_setup_title: "Conjunto de Rodas Ótimo (B × A / D × C)",
+                gear_col_1: "Roda",
+                gear_col_2: "Função",
+                gear_col_3: "Dentes (Z)",
+                driven: "Movida 1",
+                driver: "Condutora 1",
+                actual_ratio_label: "Relação Real:",
+                actual_lead_label: "Passo Real ($L_{\\text{Actual}}$):",
+                error_label: "Erro:",
+                next_setup: "Próxima Configuração",
+                previous_setup: "Configuração Anterior", // Added
+                no_more_setups: "Sem Mais Configurações (Fim)",
+                error_message: "Valores de entrada inválidos. Por favor, verifique a entrada.",
+                example: "Ex:",
+            },
+            'sr': {
+                title: "Калкулатор спиралних зупчаника",
+                subtitle: "Унесите спецификације машине и жељени корак за израчунавање преносних зупчаника.",
+                lang_label: "Изаберите језик:",
+                input_1_label: "1. Жељена дужина завојнице (Корак, L) - (мм)",
+                input_2_label: "2. Корак водећег вијка ($P_{\\text{L}}$) - (мм)",
+                input_3_label: "3. Преносни однос деонице главе ($R_{\\text{DH}}$)",
+                button_calculate: "Израчунајте зупчанике",
+                result_title: "Резултати прорачуна",
+                setup_counter: "Подешавање",
+                cm_label: "Константа корака машине ($C_{\\text{m}}$):",
+                target_ratio_label: "Циљни однос:",
+                gear_setup_title: "Оптимални сет зупчаника (B × A / D × C)",
+                gear_col_1: "Зупчаник",
+                gear_col_2: "Улога",
+                gear_col_3: "Зуби (Z)",
+                driven: "Погонски 1",
+                driver: "Водећи 1",
+                actual_ratio_label: "Стварни однос:",
+                actual_lead_label: "Стварни корак ($L_{\\text{Actual}}$):",
+                error_label: "Грешка:",
+                next_setup: "Следеће подешавање",
+                previous_setup: "Претходно подешавање", // Added
+                no_more_setups: "Нема више подешавања (Крај)",
+                error_message: "Неважеће улазне вредности. Молимо проверите улаз.",
+                example: "Нпр:",
+            },
+            'uk': {
+                title: "Калькулятор гвинтових передач",
+                subtitle: "Введіть характеристики верстата та бажаний крок для розрахунку змінних шестерень.",
+                lang_label: "Виберіть мову:",
+                input_1_label: "1. Бажана довжина гвинта (Крок, L) - (мм)",
+                input_2_label: "2. Крок ходового гвинта ($P_{\\text{L}}$) - (мм)",
+                input_3_label: "3. Передатне число ділильної головки ($R_{\\text{DH}}$)",
+                button_calculate: "Розрахувати шестерні",
+                result_title: "Результати розрахунку",
+                setup_counter: "Налаштування",
+                cm_label: "Константа кроку верстата ($C_{\\text{m}}$):",
+                target_ratio_label: "Цільове співвідношення:",
+                gear_setup_title: "Оптимальний набір шестерень (B × A / D × C)",
+                gear_col_1: "Шестерня",
+                gear_col_2: "Роль",
+                gear_col_3: "Зуби (Z)",
+                driven: "Ведена 1",
+                driver: "Ведуча 1",
+                actual_ratio_label: "Фактичне співвідношення:",
+                actual_lead_label: "Фактичний крок ($L_{\\text{Actual}}$):",
+                error_label: "Похибка:",
+                next_setup: "Наступне налаштування",
+                previous_setup: "Попереднє налаштування", // Added
+                no_more_setups: "Більше налаштувань немає (Кінець)",
+                error_message: "Недійсні вхідні значення. Будь ласка, перевірте вхідні дані.",
+                example: "Напр:",
+            },
+            'ar': {
+                title: "آلة حاسبة لتروس حلزونية",
+                subtitle: "أدخل مواصفات الماكينة والخطوة المطلوبة لحساب تروس التغيير.",
+                lang_label: "اختر اللغة:",
+                input_1_label: "1. الطول الحلزوني المطلوب (الخطوة, L) - (مم)",
+                input_2_label: "2. خطوة برغي التغذية ($P_{\\text{L}}$) - (مم)",
+                input_3_label: "3. نسبة رأس التقسيم ($R_{\\text{DH}}$)",
+                button_calculate: "حساب التروس",
+                result_title: "نتائج الحساب",
+                setup_counter: "الإعداد",
+                cm_label: "ثابت خطوة الماكينة ($C_{\\text{m}}$):",
+                target_ratio_label: "النسبة المستهدفة:",
+                gear_setup_title: "مجموعة التروس المثلى (B × A / D × C)",
+                gear_col_1: "الترس",
+                gear_col_2: "الدور",
+                gear_col_3: "الأسنان (Z)",
+                driven: "مدفوع 1",
+                driver: "دافع 1",
+                actual_ratio_label: "النسبة الفعلية:",
+                actual_lead_label: "الخطوة الفعلية ($L_{\\text{Actual}}$):",
+                error_label: "الخطأ:",
+                next_setup: "الإعداد التالي",
+                previous_setup: "الإعداد السابق", // Added
+                no_more_setups: "لا مزيد من الإعدادات (النهاية)",
+                error_message: "قيم الإدخال غير صالحة. يرجى التحقق من المدخلات.",
+                example: "مثال:",
+            },
+            'ja': {
+                title: "ヘリカルギア計算機",
+                subtitle: "機械の仕様と必要なリードを入力して、交換ギアを計算します。",
+                lang_label: "言語を選択:",
+                input_1_label: "1. 希望するねじれ長さ (リード, L) - (mm)",
+                input_2_label: "2. リードスクリューのピッチ ($P_{\\text{L}}$) - (mm)",
+                input_3_label: "3. 割出盤の比率 ($R_{\\text{DH}}$)",
+                button_calculate: "ギアを計算",
+                result_title: "計算結果",
+                setup_counter: "設定",
+                cm_label: "機械リード定数 ($C_{\\text{m}}$):",
+                target_ratio_label: "目標比率:",
+                gear_setup_title: "最適ギアセット (B × A / D × C)",
+                gear_col_1: "ギア",
+                gear_col_2: "役割",
+                gear_col_3: "歯数 (Z)",
+                driven: "従動 1",
+                driver: "駆動 1",
+                actual_ratio_label: "実際の比率:",
+                actual_lead_label: "実際のリード ($L_{\\text{Actual}}$):",
+                error_label: "誤差:",
+                next_setup: "次の設定",
+                previous_setup: "前の設定", // Added
+                no_more_setups: "これ以上の設定はありません (終了)",
+                error_message: "無効な入力値です。入力を確認してください。",
+                example: "例:",
+            },
+            'ko': {
+                title: "헬리컬 기어 계산기",
+                subtitle: "기계 사양과 원하는 리드를 입력하여 교환 기어를 계산하세요.",
+                lang_label: "언어 선택:",
+                input_1_label: "1. 원하는 나선 길이 (리드, L) - (mm)",
+                input_2_label: "2. 리드 스크류 피치 ($P_{\\text{L}}$) - (mm)",
+                input_3_label: "3. 분할 헤드 비율 ($R_{\\text{DH}}$)",
+                button_calculate: "기어 계산",
+                result_title: "계산 결과",
+                setup_counter: "설정",
+                cm_label: "기계 리드 상수 ($C_{\\text{m}}$):",
+                target_ratio_label: "목표 비율:",
+                gear_setup_title: "최적 기어 세트 (B × A / D × C)",
+                gear_col_1: "기어",
+                gear_col_2: "역할",
+                gear_col_3: "이빨 (Z)",
+                driven: "종동 1",
+                driver: "구동 1",
+                actual_ratio_label: "실제 비율:",
+                actual_lead_label: "실제 리드 ($L_{\\text{Actual}}$):",
+                error_label: "오차:",
+                next_setup: "다음 설정",
+                previous_setup: "이전 설정", // Added
+                no_more_setups: "더 이상 설정이 없습니다 (종료)",
+                error_message: "잘못된 입력 값입니다. 입력을 확인하십시오.",
+                example: "예:",
+            },
+            'de': {
+                title: "Schrägverzahnungsrechner",
+                subtitle: "Geben Sie Ihre Maschinenspezifikationen und die gewünschte Steigung ein, um die Wechselräder zu berechnen.",
+                lang_label: "Sprache wählen:",
+                input_1_label: "1. Gewünschte Schrägungslänge (Steigung, L) - (mm)",
+                input_2_label: "2. Spindelsteigung ($P_{\\text{L}}$) - (mm)",
+                input_3_label: "3. Teilkopf-Übersetzung ($R_{\\text{DH}}$)",
+                button_calculate: "Zahnräder berechnen",
+                result_title: "Berechnungsergebnisse",
+                setup_counter: "Einstellung",
+                cm_label: "Maschinen-Steigungskonstante ($C_{\\text{m}}$):",
+                target_ratio_label: "Zielverhältnis:",
+                gear_setup_title: "Optimaler Zahnradsatz (B × A / D × C)",
+                gear_col_1: "Zahnrad",
+                gear_col_2: "Rolle",
+                gear_col_3: "Zähne (Z)",
+                driven: "Getrieben 1",
+                driver: "Treiber 1",
+                actual_ratio_label: "Tatsächliches Verhältnis:",
+                actual_lead_label: "Tatsächliche Steigung ($L_{\\text{Actual}}$):",
+                error_label: "Fehler:",
+                next_setup: "Nächste Einstellung",
+                previous_setup: "Vorherige Einstellung", // Added
+                no_more_setups: "Keine weiteren Einstellungen (Ende)",
+                error_message: "Ungültige Eingabewerte. Bitte überprüfen Sie die Eingaben.",
+                example: "Bsp.:",
+            },
+            'pl': {
+                title: "Kalkulator Kół Zębatych Śrubowych",
+                subtitle: "Wprowadź specyfikację maszyny i pożądaną podziałkę, aby obliczyć koła zmianowe.",
+                lang_label: "Wybierz Język:",
+                input_1_label: "1. Żądana Długość Śruby (Skok, L) - (mm)",
+                input_2_label: "2. Skok Śruby Pociągowej ($P_{\\text{L}}$) - (mm)",
+                input_3_label: "3. Przełożenie Głowicy Dzielącej ($R_{\\text{DH}}$)",
+                button_calculate: "Oblicz Koła",
+                result_title: "Wyniki Obliczeń",
+                setup_counter: "Ustawienie",
+                cm_label: "Stała Skoku Maszyny ($C_{\\text{m}}$):",
+                target_ratio_label: "Współczynnik Docelowy:",
+                gear_setup_title: "Optymalny Zestaw Kół (B × A / D × C)",
+                gear_col_1: "Koło",
+                gear_col_2: "Rola",
+                gear_col_3: "Zęby (Z)",
+                driven: "Napędzane 1",
+                driver: "Napędowe 1",
+                actual_ratio_label: "Rzeczywisty Współczynnik:",
+                actual_lead_label: "Rzeczywisty Skok ($L_{\\text{Actual}}$):",
+                error_label: "Błąd:",
+                next_setup: "Następne Ustawienie",
+                previous_setup: "Poprzednie Ustawienie", // Added
+                no_more_setups: "Brak dalszych ustawień (Koniec)",
+                error_message: "Nieprawidłowe wartości wejściowe. Proszę sprawdzić dane wejściowe.",
+                example: "Np:",
+            },
+            'no': {
+                title: "Helisk Tannhjul Kalkulator",
+                subtitle: "Skriv inn maskinspesifikasjoner og ønsket stigning for å beregne skiftegirene.",
+                lang_label: "Velg Språk:",
+                input_1_label: "1. Ønsket Helix Lengde (Stigning, L) - (mm)",
+                input_2_label: "2. Ledningsskruens Stigning ($P_{\\text{L}}$) - (mm)",
+                input_3_label: "3. Delehodets Utvekslingsforhold ($R_{\\text{DH}}$)",
+                button_calculate: "Beregn Gir",
+                result_title: "Beregningsresultater",
+                setup_counter: "Oppsett",
+                cm_label: "Maskinens Stigningskonstant ($C_{\\text{m}}$):",
+                target_ratio_label: "Målforhold:",
+                gear_setup_title: "Optimalt Girsett (B × A / D × C)",
+                gear_col_1: "Gir",
+                gear_col_2: "Rolle",
+                gear_col_3: "Tenner (Z)",
+                driven: "Drevet 1",
+                driver: "Driver 1",
+                actual_ratio_label: "Faktisk Forhold:",
+                actual_lead_label: "Faktisk Stigning ($L_{\\text{Actual}}$):",
+                error_label: "Feil:",
+                next_setup: "Neste Oppsett",
+                previous_setup: "Forrige Oppsett", // Added
+                no_more_setups: "Ingen flere oppsett (Slutt)",
+                error_message: "Ugyldige inndataverdier. Vennligst sjekk inndataene.",
+                example: "Eks:",
+            }
+        };
+
+
+        // --- Core Functions ---
+
+        /**
+         * Changes the language of all UI elements based on the selected language code.
+         * @param {string} langCode - The language code (e.g., 'my', 'en').
+         */
+        function changeLanguage(langCode) {
+            const translation = TRANSLATIONS[langCode] || TRANSLATIONS['en']; // Default to English
+            
+            // 1. Update Title
+            document.getElementById('app-title-key').textContent = translation.title;
+
+            // 2. Update all elements with data-lang-key attribute
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                if (translation[key]) {
+                    // Specific handling for table roles as they are duplicated in the table
+                    if (key === 'driven') {
+                         element.textContent = translation[key].replace('1', ''); // Remove 1 from display
+                    } else if (key === 'driver') {
+                         element.textContent = translation[key].replace('1', ''); // Remove 1 from display
+                    } else {
+                        element.textContent = translation[key];
+                    }
+                }
+            });
+
+            // 3. Update Placeholder for input fields 
+            const exampleKey = translation.example;
+            document.getElementById('lead').placeholder = `${exampleKey}: 56.0`;
+            document.getElementById('pitch').placeholder = `${exampleKey}: 4.5`;
+            document.getElementById('ratio').placeholder = `${exampleKey}: 40`;
+            
+            // 4. Update Table Role text manually (they are inside <td> tags)
+            const drivenText = translation.driven;
+            const driverText = translation.driver;
+            
+            document.querySelector('tbody tr:nth-child(1) td:nth-child(2)').textContent = drivenText;
+            document.querySelector('tbody tr:nth-child(2) td:nth-child(2)').textContent = drivenText.replace('1', ' 2'); // Driven 2
+            document.querySelector('tbody tr:nth-child(3) td:nth-child(2)').textContent = driverText;
+            document.querySelector('tbody tr:nth-child(4) td:nth-child(2)').textContent = driverText.replace('1', ' 2'); // Driver 2
+
+            // Recalculate and redisplay to update dynamic text like Setup/Error
+            if (allCombinations.length > 0) {
+                displaySetup(currentSetupIndex);
+            }
+            
+            // Handle RTL direction for Arabic
+            if (langCode === 'ar') {
+                document.body.dir = 'rtl';
+            } else {
+                document.body.dir = 'ltr';
+            }
+        }
+
+
+        /**
+         * Updates the HTML elements with the details of the combination at the given index.
+         * @param {number} index - The index of the combination to display from allCombinations array.
+         */
+        function displaySetup(index) {
+            const combination = allCombinations[index];
+            const Cm = parseFloat(document.getElementById('cm-output').textContent);
+            const Rt = parseFloat(document.getElementById('target-ratio-output').textContent);
+            const totalSetups = allCombinations.length;
+            const langCode = document.getElementById('language-select').value;
+            const translation = TRANSLATIONS[langCode];
+            
+            const actualLead = Cm / combination.Ra;
+            const errorPercentage = (combination.error * 100 / Rt);
+
+            // Update Gear Table
+            document.getElementById('gear-b').textContent = combination.B;
+            document.getElementById('gear-a').textContent = combination.A;
+            document.getElementById('gear-d').textContent = combination.D;
+            document.getElementById('gear-c').textContent = combination.C;
+
+            // Update Accuracy Summary
+            document.getElementById('actual-ratio-output').textContent = combination.Ra.toFixed(5);
+            document.getElementById('actual-lead-output').textContent = `${actualLead.toFixed(3)} mm`;
+            document.getElementById('error-output').textContent = `${errorPercentage.toFixed(4)} %`;
+            
+            // Update Setup Counter
+            document.getElementById('setup-counter').textContent = `${translation.setup_counter} ${index + 1} / ${totalSetups}`;
+            
+            // Update Navigation Button States
+            const nextBtn = document.getElementById('next-setup-button');
+            const prevBtn = document.getElementById('prev-setup-button');
+
+            // Handle NEXT button state
+            if (index < totalSetups - 1) {
+                nextBtn.textContent = translation.next_setup;
+                nextBtn.disabled = false;
+                nextBtn.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-gray-400');
+                nextBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+            } else {
+                nextBtn.textContent = translation.no_more_setups;
+                nextBtn.disabled = true;
+                nextBtn.classList.add('opacity-50', 'cursor-not-allowed', 'bg-gray-400');
+                nextBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+            }
+
+            // Handle PREVIOUS button state
+            if (index > 0) {
+                prevBtn.textContent = translation.previous_setup;
+                prevBtn.disabled = false;
+                prevBtn.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-gray-400');
+                prevBtn.classList.add('bg-gray-500', 'hover:bg-gray-600');
+            } else {
+                prevBtn.textContent = translation.previous_setup;
+                prevBtn.disabled = true;
+                prevBtn.classList.add('opacity-50', 'cursor-not-allowed', 'bg-gray-400');
+                prevBtn.classList.remove('bg-gray-500', 'hover:bg-gray-600');
+            }
+        }
+
+        /**
+         * Moves to the next best gear setup in the stored list.
+         */
+        function nextSetup() {
+            if (currentSetupIndex < allCombinations.length - 1) {
+                currentSetupIndex++;
+                displaySetup(currentSetupIndex);
+            }
+        }
+        
+        /**
+         * Moves to the previous best gear setup in the stored list.
+         */
+        function previousSetup() {
+            if (currentSetupIndex > 0) {
+                currentSetupIndex--;
+                displaySetup(currentSetupIndex);
+            }
+        }
+
+        /**
+         * Main calculation function, triggered by the button click.
+         */
+        function calculate() {
+            // 1. Get Inputs
+            const L = parseFloat(document.getElementById('lead').value);
+            const P_L = parseFloat(document.getElementById('pitch').value);
+            const R_DH = parseFloat(document.getElementById('ratio').value);
+            
+            const resultDiv = document.getElementById('result');
+            const errorMessageDiv = document.getElementById('error-message');
+            
+            // Input Validation
+            if (isNaN(L) || isNaN(P_L) || isNaN(R_DH) || L <= 0 || P_L <= 0 || R_DH <= 0) {
+                resultDiv.classList.add('hidden');
+                errorMessageDiv.classList.remove('hidden');
+                allCombinations = []; // Clear state on error
+                return;
+            }
+
+            errorMessageDiv.classList.add('hidden');
+            
+            // 2. Calculate Machine Lead Constant (Cm) & Target Ratio (Rt)
+            const Cm = P_L * R_DH;
+            const Rt = Cm / L;
+            
+            document.getElementById('cm-output').textContent = `${Cm.toFixed(2)} mm`;
+            document.getElementById('target-ratio-output').textContent = Rt.toFixed(5);
+
+            // 3. Find and store ALL combinations
+            allCombinations = [];
+            currentSetupIndex = 0;
+
+            // Brute force search for all combinations
+            for (let B of STANDARD_GEARS) {
+                for (let A of STANDARD_GEARS) {
+                    for (let D of STANDARD_GEARS) {
+                        for (let C of STANDARD_GEARS) {
+                            const Ra = (B * A) / (D * C);
+                            const error = Math.abs(Rt - Ra);
+                            
+                            // Check for redundancy: avoid storing the same gear ratio multiple times
+                            if (allCombinations.find(combo => Math.abs(combo.Ra - Ra) < 1e-9)) {
+                                continue;
+                            }
+
+                            allCombinations.push({ B, A, D, C, Ra, error });
+                        }
+                    }
+                }
+            }
+
+            // 4. Sort combinations by the absolute error (best first)
+            allCombinations.sort((a, b) => a.error - b.error);
+
+            // Filter to only show results with reasonable accuracy (e.g., first 50 results)
+            allCombinations = allCombinations.slice(0, 50);
+
+            // 5. Initial Display
+            if (allCombinations.length > 0) {
+                displaySetup(currentSetupIndex);
+                resultDiv.classList.remove('hidden');
+            } else {
+                 // The error message should also be translated, but this is a deep fallback
+                 document.getElementById('error-message').textContent = TRANSLATIONS[document.getElementById('language-select').value].error_message; 
+                 errorMessageDiv.classList.remove('hidden');
+            }
+        }
+
+        // Run setup on load
+        window.onload = function() {
+            // Set default language to English and load translations
+            const defaultLang = 'en';
+            document.getElementById('language-select').value = defaultLang;
+            changeLanguage(defaultLang);
+            
+            // Run calculation with default values for initial display
+            calculate();
+        };
+
+    </script>
+
+</body>
+</html>
