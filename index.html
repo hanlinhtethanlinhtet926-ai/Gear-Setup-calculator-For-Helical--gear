@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="app-title-key">Helical Gear Calculator</title>
-    <meta name="description"content="Instantly calculate the correct change gears for cutting helical gears on a manual milling machine with a dividing head. Input your desired lead, leadscrew pitch, and dividing head ratio, and get a precise, error-free gear set (A, B, C, D). Perfect for machinists and engineers to save time and ensure accuracy.">
-    <link rel="icon" type="image/png" href="A12.png">
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -200,6 +198,16 @@
                         data-lang-key="next_setup">
                     Next Setup
                 </button>
+            </div>
+
+                        <div class="mt-4 flex space-x-4">
+                <button onclick="goToAbout()"
+                        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
+                        data-lang-key="about_page">
+                    About This Tool
+                </button>
+           
+
             </div>
             
             <div id="error-message" class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg hidden myanmar-text" data-lang-key="error_message">
@@ -952,9 +960,14 @@
             calculate();
         };
 
+                function goToAbout() {
+            window.location.href = "about.html";
+        }
+
     </script>
 
 </body>
 </html>
+
 
 
