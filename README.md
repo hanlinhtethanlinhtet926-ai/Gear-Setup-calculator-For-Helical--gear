@@ -6,7 +6,7 @@
 
 A web-based calculator for determining the correct change gears when cutting helical gears on a manual milling machine with a dividing head.
 
-![Calculator Screenshot](screenshot.png) <!-- Add your screenshot here -->
+![Calculator Screenshot](Screenshot 2025-11-22 190936.png) <!-- Add your screenshot here -->
 
 ## 🚀 Features
 
@@ -59,3 +59,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
