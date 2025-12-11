@@ -18,7 +18,7 @@
             font-size: 0.95rem;
         }
 
-                    .page-footer {
+            .page-footer {
                 width: 100%;
                 background-color: #2c3e50;
                 color: #ecf0f1;
@@ -32,6 +32,32 @@
                 max-width: 800px;
                 margin: 0 auto;
             }
+            
+            /* Updated style to display QR codes side-by-side */
+            .qr-codes-wrapper {
+                display: flex;
+                flex-wrap: wrap; /* Allows wrapping on smaller screens */
+                justify-content: center;
+                gap: 20px; /* Space between the two QR containers */
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+            .qr-code-container {
+                text-align: center; /* Center text/image inside the container */
+            }
+            .qr-code-img {
+                width: 120px; /* Slightly smaller to fit two side-by-side */
+                height: 120px;
+                border: 1px solid #ddd;
+                padding: 5px;
+                border-radius: 5px;
+                display: block; /* Make sure image is a block element for sizing */
+                margin: 0 auto 5px; /* Center the image and add space below */
+            }
+            .qr-label {
+                font-size: 0.9em;
+                color: #555;
+            }
     </style>
 </head>
 <body class="p-4 md:p-8 min-h-screen flex items-center justify-center">
@@ -43,7 +69,7 @@
             This Helical Gear Calculator is a tool designed to help engineers and machinists calculate the necessary change gears for helical gear systems based on machine specifications and desired lead. It simplifies the process of gear selection, ensuring accurate and efficient gear configurations for various applications.
         </p>
         <h2 class="text-2xl font-bold text-indigo-800 mb-4" data-lang-key="features_title">
-            Key Features   
+            Key Features    
         </h2>
         <ul class="list-disc list-inside text-gray-700 myanmar-text mb-8" data-lang-key="features_list">
             <li>Input machine specifications including gear module, number of teeth, helix angle, and desired lead.</li>
@@ -73,16 +99,27 @@
             Gmail:<a href="mailto:hmystudio7@gmail.com">X-plore Hone Acheive STUDIO</a>
             TikTok: <a href="https://www.tiktok.com/@xha.studio">XHA_STUDIO</a><br/>
             
-                <footer class="page-footer">
-            <div class="footer-content">
-                <p>&copy; 2024 X-plore Hone Acheive STUDIO. All rights reserved.</p>
-                <p>
+            <div class="qr-codes-wrapper">
+                <div class="qr-code-container">
+                    <img src="qr-code.png" alt="QR Code for General Social Media" class="qr-code-img">
+                    <span class="qr-label">General Link / Website</span>
+                </div>
+                <div class="qr-code-container">
+                    <img src="qr-codeTiktok.png" alt="QR Code for TikTok Account" class="qr-code-img">
+                    <span class="qr-label">Scan for TikTok</span>
+                </div>
             </div>
-        </footer>
+            <footer class="page-footer">
+                <div class="footer-content">
+                    <p>&copy; 2024 X-plore Hone Acheive STUDIO. All rights reserved.</p>
+                    <p>
+                </div>
+            </footer>
 
 
     </div>
 
 
-        
+      
 </body>
+</html>
