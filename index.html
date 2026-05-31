@@ -13,19 +13,267 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+        /* ── Base ── */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f7f9fb;
+            background-color: #f0f4ff;
+            background-image:
+                radial-gradient(circle at 20% 20%, rgba(99,102,241,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(129,140,248,0.06) 0%, transparent 50%);
+            min-height: 100vh;
         }
-        .card {
-            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 4px, 6px, 0.05);
+        .myanmar-text { font-size: 0.95rem; }
+
+        /* ── Keyframes ── */
+        @keyframes fadeSlideDown {
+            from { opacity: 0; transform: translateY(-18px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
-        /* Custom styling for non-Latin fonts for better readability */
-        .myanmar-text {
-            font-size: 0.95rem;
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.93); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+        @keyframes spinGear {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+        @keyframes borderPulse {
+            0%, 100% { border-color: #6366f1; box-shadow: 0 0 0 0 rgba(99,102,241,0); }
+            50%       { border-color: #818cf8; box-shadow: 0 0 0 4px rgba(99,102,241,0.15); }
+        }
+        @keyframes ripple {
+            0%   { transform: scale(0); opacity: 0.5; }
+            100% { transform: scale(4); opacity: 0; }
+        }
+        @keyframes rowSlide {
+            from { opacity: 0; transform: translateX(-14px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes countPop {
+            0%   { transform: scale(1); }
+            40%  { transform: scale(1.18); color: #6366f1; }
+            100% { transform: scale(1); }
+        }
+        @keyframes shimmer {
+            0%   { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        @keyframes floatBadge {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-3px); }
+        }
+        @keyframes gradientShift {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
-        /* ── Mobile full-screen styles ── */
+        /* ── Card ── */
+        .card {
+            box-shadow:
+                0 1px 3px rgba(99,102,241,0.08),
+                0 8px 24px rgba(99,102,241,0.10),
+                0 24px 48px rgba(0,0,0,0.06);
+            animation: scaleIn 0.45s cubic-bezier(0.34,1.56,0.64,1) both;
+            border-top: 4px solid transparent;
+            background-image: linear-gradient(white, white),
+                linear-gradient(90deg, #6366f1, #818cf8, #a5b4fc, #818cf8, #6366f1);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            background-size: auto, 300% auto;
+            animation: scaleIn 0.45s cubic-bezier(0.34,1.56,0.64,1) both,
+                       gradientShift 4s ease infinite;
+            transition: box-shadow 0.3s ease;
+        }
+        .card:hover {
+            box-shadow:
+                0 2px 6px rgba(99,102,241,0.12),
+                0 12px 32px rgba(99,102,241,0.14),
+                0 32px 56px rgba(0,0,0,0.08);
+        }
+
+        /* ── Page-load stagger ── */
+        #app h1        { animation: fadeSlideDown 0.5s 0.1s ease both; }
+        #app > p       { animation: fadeSlideDown 0.5s 0.2s ease both; }
+        #app .space-y-6 > div:nth-child(1) { animation: fadeSlideUp 0.45s 0.25s ease both; }
+        #app .space-y-6 > div:nth-child(2) { animation: fadeSlideUp 0.45s 0.35s ease both; }
+        #app .space-y-6 > button           { animation: fadeSlideUp 0.45s 0.45s ease both; }
+        .mb-6.flex.justify-end             { animation: fadeIn 0.4s 0.05s ease both; }
+
+        /* ── Inputs ── */
+        input[type="number"] {
+            transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s;
+            border-radius: 10px !important;
+        }
+        input[type="number"]:focus {
+            animation: borderPulse 1.8s ease-in-out infinite;
+            transform: translateY(-1px);
+            outline: none;
+        }
+        input[type="number"]:hover:not(:focus) {
+            border-color: #a5b4fc;
+            box-shadow: 0 0 0 3px rgba(165,180,252,0.2);
+        }
+
+        /* ── Calculate button ── */
+        #calculate-button {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #6366f1 0%, #818cf8 50%, #6366f1 100%);
+            background-size: 200% auto;
+            border: none !important;
+            border-radius: 12px !important;
+            letter-spacing: 0.02em;
+            transition: background-position 0.4s ease, transform 0.15s ease, box-shadow 0.25s ease;
+            box-shadow: 0 4px 14px rgba(99,102,241,0.4);
+        }
+        #calculate-button:hover {
+            background-position: right center;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99,102,241,0.5);
+        }
+        #calculate-button:active {
+            transform: scale(0.97) translateY(0);
+            box-shadow: 0 2px 8px rgba(99,102,241,0.35);
+        }
+        #calculate-button .ripple-el {
+            position: absolute;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.4);
+            margin-top: -20px;
+            margin-left: -20px;
+            animation: ripple 0.65s linear;
+            pointer-events: none;
+        }
+        #calculate-button.spinning::before {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.4);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spinGear 0.7s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        /* ── Nav buttons ── */
+        #prev-setup-button, #next-setup-button {
+            border-radius: 10px !important;
+            transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s;
+        }
+        #next-setup-button:not(:disabled) {
+            box-shadow: 0 3px 10px rgba(22,163,74,0.3);
+        }
+        #next-setup-button:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 16px rgba(22,163,74,0.4);
+        }
+        #next-setup-button:not(:disabled):active,
+        #prev-setup-button:not(:disabled):active {
+            transform: scale(0.96);
+        }
+        #prev-setup-button:not(:disabled):hover {
+            transform: translateY(-2px);
+        }
+
+        /* ── Result panel reveal ── */
+        #result:not(.hidden) {
+            animation: fadeSlideUp 0.4s 0.05s ease both;
+        }
+
+        /* ── Table rows stagger ── */
+        tbody tr:nth-child(1) { animation: rowSlide 0.35s 0.05s ease both; }
+        tbody tr:nth-child(2) { animation: rowSlide 0.35s 0.12s ease both; }
+        tbody tr:nth-child(3) { animation: rowSlide 0.35s 0.19s ease both; }
+        tbody tr:nth-child(4) { animation: rowSlide 0.35s 0.26s ease both; }
+
+        /* ── Gear teeth count pop ── */
+        .gear-value-pop {
+            animation: countPop 0.4s ease both;
+        }
+
+        /* ── Setup counter badge ── */
+        #setup-counter {
+            animation: floatBadge 3s ease-in-out infinite;
+        }
+
+        /* ── Key figures panel ── */
+        .bg-indigo-50 {
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+        .bg-indigo-50::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                105deg,
+                transparent 40%,
+                rgba(255,255,255,0.45) 50%,
+                transparent 60%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 2.5s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        /* ── Accuracy card ── */
+        .bg-yellow-50 {
+            transition: transform 0.25s ease;
+            border-radius: 10px !important;
+        }
+        .bg-yellow-50:hover { transform: translateY(-1px); }
+
+        /* ── About button ── */
+        .mt-4.flex.space-x-4 + .mt-4.flex.space-x-4 button {
+            background: linear-gradient(135deg, #6366f1, #818cf8) !important;
+            border-radius: 10px !important;
+            border: none !important;
+            box-shadow: 0 3px 12px rgba(99,102,241,0.3);
+            transition: transform 0.15s, box-shadow 0.2s;
+        }
+        .mt-4.flex.space-x-4 + .mt-4.flex.space-x-4 button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 18px rgba(99,102,241,0.45);
+        }
+
+        /* ── Table ── */
+        table { border-radius: 12px; overflow: hidden; }
+        tbody tr {
+            transition: background-color 0.2s ease;
+        }
+        tbody tr:hover { background-color: rgba(99,102,241,0.04); }
+        td.text-indigo-700 {
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.01em;
+        }
+
+        /* ── Language select ── */
+        #language-select {
+            border-radius: 8px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        #language-select:focus {
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+            border-color: #6366f1;
+            outline: none;
+        }
+
+        /* ── Mobile full-screen ── */
         @media (max-width: 767px) {
             html, body {
                 height: 100%;
@@ -37,45 +285,33 @@
                 flex-direction: column;
                 align-items: stretch;
                 padding: 0 !important;
-                background-color: #fff;
+                background-color: #f0f4ff;
             }
             #app {
                 width: 100% !important;
                 max-width: 100% !important;
                 min-height: 100svh;
                 border-radius: 0 !important;
-                border-top-width: 4px;
                 padding: 1.25rem 1rem 2rem !important;
-                box-shadow: none !important;
+                box-shadow: 0 0 40px rgba(99,102,241,0.12) !important;
                 display: flex;
                 flex-direction: column;
             }
-            /* Larger tap targets for inputs */
             input[type="number"] {
                 font-size: 1rem !important;
                 padding: 0.65rem 1rem !important;
                 min-height: 48px;
             }
-            /* Larger tap target for buttons */
             button {
                 min-height: 48px;
                 font-size: 0.95rem !important;
             }
-            /* Stack the 2-col grid to single column on small screens */
             .grid.grid-cols-1.md\\:grid-cols-2 {
                 grid-template-columns: 1fr !important;
             }
-            /* Language selector row: tighter */
-            .mb-6.flex.justify-end {
-                margin-bottom: 0.75rem;
-            }
-            /* Table font size bump for readability */
-            table {
-                font-size: 0.9rem;
-            }
-            td, th {
-                padding: 0.5rem 0.6rem !important;
-            }
+            .mb-6.flex.justify-end { margin-bottom: 0.75rem; }
+            table { font-size: 0.9rem; }
+            td, th { padding: 0.5rem 0.6rem !important; }
         }
     </style>
 </head>
@@ -308,7 +544,7 @@
                 actual_lead_label: "ရရှိသော Lead ($L_{\\text{Actual}}$):",
                 error_label: "တိကျမှု ကွာဟချက် (Error):",
                 next_setup: "Next Setup",
-                previous_setup: "Previous Setup", // Added
+                previous_setup: "Previous Setup",
                 no_more_setups: "No More Setups (End)",
                 error_message: "ထည့်သွင်းမှု တန်ဖိုးများ မှားယွင်းနေပါသည်။ ကျေးဇူးပြု၍ တန်ဖိုးများကို စစ်ဆေးပါ။",
                 example: "ဥပမာ:",
@@ -335,7 +571,7 @@
                 actual_lead_label: "Actual Lead ($L_{\\text{Actual}}$):",
                 error_label: "Error:",
                 next_setup: "Next Setup",
-                previous_setup: "Previous Setup", // Added
+                previous_setup: "Previous Setup",
                 no_more_setups: "No More Setups (End)",
                 error_message: "Invalid input values. Please check the inputs.",
                 example: "Ex:",
@@ -362,7 +598,7 @@
                 actual_lead_label: "ระยะนำจริง ($L_{\\text{Actual}}$):",
                 error_label: "ข้อผิดพลาด:",
                 next_setup: "ชุดถัดไป",
-                previous_setup: "ชุดก่อนหน้า", // Added
+                previous_setup: "ชุดก่อนหน้า",
                 no_more_setups: "ไม่มีชุดเพิ่มเติม (สิ้นสุด)",
                 error_message: "ค่าอินพุตไม่ถูกต้อง กรุณาตรวจสอบ.",
                 example: "ตัวอย่าง:",
@@ -389,7 +625,7 @@
                 actual_lead_label: "Фактический шаг ($L_{\\text{Actual}}$):",
                 error_label: "Ошибка:",
                 next_setup: "Следующая настройка",
-                previous_setup: "Предыдущая настройка", // Added
+                previous_setup: "Предыдущая настройка",
                 no_more_setups: "Больше настроек нет (Конец)",
                 error_message: "Неверные входные значения. Пожалуйста, проверьте ввод.",
                 example: "Пример:",
@@ -416,7 +652,7 @@
                 actual_lead_label: "Бодит алхам ($L_{\\text{Actual}}$):",
                 error_label: "Алдаа:",
                 next_setup: "Дараагийн тохиргоо",
-                previous_setup: "Өмнөх тохиргоо", // Added
+                previous_setup: "Өмнөх тохиргоо",
                 no_more_setups: "Цаашид тохиргоо байхгүй (Төгсгөл)",
                 error_message: "Оролтын утгууд буруу байна. Оролтуудыг шалгана уу.",
                 example: "Жишээ:",
@@ -443,7 +679,7 @@
                 actual_lead_label: "Avance Real ($L_{\\text{Actual}}$):",
                 error_label: "Error:",
                 next_setup: "Siguiente Configuración",
-                previous_setup: "Configuración Anterior", // Added
+                previous_setup: "Configuración Anterior",
                 no_more_setups: "No hay más configuraciones (Fin)",
                 error_message: "Valores de entrada no válidos. Por favor, compruebe las entradas.",
                 example: "Ejemplo:",
@@ -470,7 +706,7 @@
                 actual_lead_label: "Pas Réel ($L_{\\text{Actual}}$):",
                 error_label: "Erreur:",
                 next_setup: "Configuration Suivante",
-                previous_setup: "Configuration Précédente", // Added
+                previous_setup: "Configuration Précédente",
                 no_more_setups: "Plus de configurations (Fin)",
                 error_message: "Valeurs d'entrée non valides. Veuillez vérifier les entrées.",
                 example: "Exemple:",
@@ -497,7 +733,7 @@
                 actual_lead_label: "实际导程 ($L_{\\text{Actual}}$):",
                 error_label: "误差:",
                 next_setup: "下一设置",
-                previous_setup: "上一设置", // Added
+                previous_setup: "上一设置",
                 no_more_setups: "没有更多设置 (结束)",
                 error_message: "输入值无效。请检查输入。",
                 example: "例如:",
@@ -524,7 +760,7 @@
                 actual_lead_label: "वास्तविक लीड ($L_{\\text{Actual}}$):",
                 error_label: "त्रुटि:",
                 next_setup: "अगला सेटअप",
-                previous_setup: "पिछला सेटअप", // Added
+                previous_setup: "पिछला सेटअप",
                 no_more_setups: "और सेटअप नहीं (समाप्त)",
                 error_message: "अमान्य इनपुट मान। कृपया इनपुट जांचें।",
                 example: "उदाहरण:",
@@ -551,7 +787,7 @@
                 actual_lead_label: "Werkelijke Spoed ($L_{\\text{Actual}}$):",
                 error_label: "Fout:",
                 next_setup: "Volgende Opstelling",
-                previous_setup: "Vorige Opstelling", // Added
+                previous_setup: "Vorige Opstelling",
                 no_more_setups: "Geen Opstellingen Meer (Einde)",
                 error_message: "Ongeldige invoerwaarden. Controleer de invoer.",
                 example: "Bv:",
@@ -578,7 +814,7 @@
                 actual_lead_label: "Passo Real ($L_{\\text{Actual}}$):",
                 error_label: "Erro:",
                 next_setup: "Próxima Configuração",
-                previous_setup: "Configuração Anterior", // Added
+                previous_setup: "Configuração Anterior",
                 no_more_setups: "Sem Mais Configurações (Fim)",
                 error_message: "Valores de entrada inválidos. Por favor, verifique a entrada.",
                 example: "Ex:",
@@ -605,7 +841,7 @@
                 actual_lead_label: "Стварни корак ($L_{\\text{Actual}}$):",
                 error_label: "Грешка:",
                 next_setup: "Следеће подешавање",
-                previous_setup: "Претходно подешавање", // Added
+                previous_setup: "Претходно подешавање",
                 no_more_setups: "Нема више подешавања (Крај)",
                 error_message: "Неважеће улазне вредности. Молимо проверите улаз.",
                 example: "Нпр:",
@@ -632,7 +868,7 @@
                 actual_lead_label: "Фактичний крок ($L_{\\text{Actual}}$):",
                 error_label: "Похибка:",
                 next_setup: "Наступне налаштування",
-                previous_setup: "Попереднє налаштування", // Added
+                previous_setup: "Попереднє налаштування",
                 no_more_setups: "Більше налаштувань немає (Кінець)",
                 error_message: "Недійсні вхідні значення. Будь ласка, перевірте вхідні дані.",
                 example: "Напр:",
@@ -659,7 +895,7 @@
                 actual_lead_label: "الخطوة الفعلية ($L_{\\text{Actual}}$):",
                 error_label: "الخطأ:",
                 next_setup: "الإعداد التالي",
-                previous_setup: "الإعداد السابق", // Added
+                previous_setup: "الإعداد السابق",
                 no_more_setups: "لا مزيد من الإعدادات (النهاية)",
                 error_message: "قيم الإدخال غير صالحة. يرجى التحقق من المدخلات.",
                 example: "مثال:",
@@ -686,7 +922,7 @@
                 actual_lead_label: "実際のリード ($L_{\\text{Actual}}$):",
                 error_label: "誤差:",
                 next_setup: "次の設定",
-                previous_setup: "前の設定", // Added
+                previous_setup: "前の設定",
                 no_more_setups: "これ以上の設定はありません (終了)",
                 error_message: "無効な入力値です。入力を確認してください。",
                 example: "例:",
@@ -713,7 +949,7 @@
                 actual_lead_label: "실제 리드 ($L_{\\text{Actual}}$):",
                 error_label: "오차:",
                 next_setup: "다음 설정",
-                previous_setup: "이전 설정", // Added
+                previous_setup: "이전 설정",
                 no_more_setups: "더 이상 설정이 없습니다 (종료)",
                 error_message: "잘못된 입력 값입니다. 입력을 확인하십시오.",
                 example: "예:",
@@ -740,7 +976,7 @@
                 actual_lead_label: "Tatsächliche Steigung ($L_{\\text{Actual}}$):",
                 error_label: "Fehler:",
                 next_setup: "Nächste Einstellung",
-                previous_setup: "Vorherige Einstellung", // Added
+                previous_setup: "Vorherige Einstellung",
                 no_more_setups: "Keine weiteren Einstellungen (Ende)",
                 error_message: "Ungültige Eingabewerte. Bitte überprüfen Sie die Eingaben.",
                 example: "Bsp.:",
@@ -767,7 +1003,7 @@
                 actual_lead_label: "Rzeczywisty Skok ($L_{\\text{Actual}}$):",
                 error_label: "Błąd:",
                 next_setup: "Następne Ustawienie",
-                previous_setup: "Poprzednie Ustawienie", // Added
+                previous_setup: "Poprzednie Ustawienie",
                 no_more_setups: "Brak dalszych ustawień (Koniec)",
                 error_message: "Nieprawidłowe wartości wejściowe. Proszę sprawdzić dane wejściowe.",
                 example: "Np:",
@@ -794,7 +1030,7 @@
                 actual_lead_label: "Faktisk Stigning ($L_{\\text{Actual}}$):",
                 error_label: "Feil:",
                 next_setup: "Neste Oppsett",
-                previous_setup: "Forrige Oppsett", // Added
+                previous_setup: "Forrige Oppsett",
                 no_more_setups: "Ingen flere oppsett (Slutt)",
                 error_message: "Ugyldige inndataverdier. Vennligst sjekk inndataene.",
                 example: "Eks:",
@@ -804,52 +1040,41 @@
 
         // --- Core Functions ---
 
-        /**
-         * Changes the language of all UI elements based on the selected language code.
-         * @param {string} langCode - The language code (e.g., 'my', 'en').
-         */
         function changeLanguage(langCode) {
-            const translation = TRANSLATIONS[langCode] || TRANSLATIONS['en']; // Default to English
+            const translation = TRANSLATIONS[langCode] || TRANSLATIONS['en'];
             
-            // 1. Update Title
             document.getElementById('app-title-key').textContent = translation.title;
 
-            // 2. Update all elements with data-lang-key attribute
             document.querySelectorAll('[data-lang-key]').forEach(element => {
                 const key = element.getAttribute('data-lang-key');
                 if (translation[key]) {
-                    // Specific handling for table roles as they are duplicated in the table
                     if (key === 'driven') {
-                         element.textContent = translation[key].replace('1', ''); // Remove 1 from display
+                         element.textContent = translation[key].replace('1', '');
                     } else if (key === 'driver') {
-                         element.textContent = translation[key].replace('1', ''); // Remove 1 from display
+                         element.textContent = translation[key].replace('1', '');
                     } else {
                         element.textContent = translation[key];
                     }
                 }
             });
 
-            // 3. Update Placeholder for input fields 
             const exampleKey = translation.example;
             document.getElementById('lead').placeholder = `${exampleKey}: 56.0`;
             document.getElementById('pitch').placeholder = `${exampleKey}: 4.5`;
             document.getElementById('ratio').placeholder = `${exampleKey}: 40`;
             
-            // 4. Update Table Role text manually (they are inside <td> tags)
             const drivenText = translation.driven;
             const driverText = translation.driver;
             
             document.querySelector('tbody tr:nth-child(1) td:nth-child(2)').textContent = drivenText;
-            document.querySelector('tbody tr:nth-child(2) td:nth-child(2)').textContent = drivenText.replace('1', ' 2'); // Driven 2
+            document.querySelector('tbody tr:nth-child(2) td:nth-child(2)').textContent = drivenText.replace('1', ' 2');
             document.querySelector('tbody tr:nth-child(3) td:nth-child(2)').textContent = driverText;
-            document.querySelector('tbody tr:nth-child(4) td:nth-child(2)').textContent = driverText.replace('1', ' 2'); // Driver 2
+            document.querySelector('tbody tr:nth-child(4) td:nth-child(2)').textContent = driverText.replace('1', ' 2');
 
-            // Recalculate and redisplay to update dynamic text like Setup/Error
             if (allCombinations.length > 0) {
                 displaySetup(currentSetupIndex);
             }
             
-            // Handle RTL direction for Arabic
             if (langCode === 'ar') {
                 document.body.dir = 'rtl';
             } else {
@@ -857,11 +1082,6 @@
             }
         }
 
-
-        /**
-         * Updates the HTML elements with the details of the combination at the given index.
-         * @param {number} index - The index of the combination to display from allCombinations array.
-         */
         function displaySetup(index) {
             const combination = allCombinations[index];
             const Cm = parseFloat(document.getElementById('cm-output').textContent);
@@ -873,25 +1093,21 @@
             const actualLead = Cm / combination.Ra;
             const errorPercentage = (combination.error * 100 / Rt);
 
-            // Update Gear Table
             document.getElementById('gear-b').textContent = combination.B;
             document.getElementById('gear-a').textContent = combination.A;
             document.getElementById('gear-d').textContent = combination.D;
             document.getElementById('gear-c').textContent = combination.C;
+            popGearValues();
 
-            // Update Accuracy Summary
             document.getElementById('actual-ratio-output').textContent = combination.Ra.toFixed(5);
             document.getElementById('actual-lead-output').textContent = `${actualLead.toFixed(3)} mm`;
             document.getElementById('error-output').textContent = `${errorPercentage.toFixed(4)} %`;
             
-            // Update Setup Counter
             document.getElementById('setup-counter').textContent = `${translation.setup_counter} ${index + 1} / ${totalSetups}`;
             
-            // Update Navigation Button States
             const nextBtn = document.getElementById('next-setup-button');
             const prevBtn = document.getElementById('prev-setup-button');
 
-            // Handle NEXT button state
             if (index < totalSetups - 1) {
                 nextBtn.textContent = translation.next_setup;
                 nextBtn.disabled = false;
@@ -904,7 +1120,6 @@
                 nextBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
             }
 
-            // Handle PREVIOUS button state
             if (index > 0) {
                 prevBtn.textContent = translation.previous_setup;
                 prevBtn.disabled = false;
@@ -918,9 +1133,6 @@
             }
         }
 
-        /**
-         * Moves to the next best gear setup in the stored list.
-         */
         function nextSetup() {
             if (currentSetupIndex < allCombinations.length - 1) {
                 currentSetupIndex++;
@@ -928,9 +1140,6 @@
             }
         }
         
-        /**
-         * Moves to the previous best gear setup in the stored list.
-         */
         function previousSetup() {
             if (currentSetupIndex > 0) {
                 currentSetupIndex--;
@@ -938,11 +1147,7 @@
             }
         }
 
-        /**
-         * Main calculation function, triggered by the button click.
-         */
         function calculate() {
-            // 1. Get Inputs
             const L = parseFloat(document.getElementById('lead').value);
             const P_L = parseFloat(document.getElementById('pitch').value);
             const R_DH = parseFloat(document.getElementById('ratio').value);
@@ -950,28 +1155,24 @@
             const resultDiv = document.getElementById('result');
             const errorMessageDiv = document.getElementById('error-message');
             
-            // Input Validation
             if (isNaN(L) || isNaN(P_L) || isNaN(R_DH) || L <= 0 || P_L <= 0 || R_DH <= 0) {
                 resultDiv.classList.add('hidden');
                 errorMessageDiv.classList.remove('hidden');
-                allCombinations = []; // Clear state on error
+                allCombinations = [];
                 return;
             }
 
             errorMessageDiv.classList.add('hidden');
             
-            // 2. Calculate Machine Lead Constant (Cm) & Target Ratio (Rt)
             const Cm = P_L * R_DH;
             const Rt = Cm / L;
             
             document.getElementById('cm-output').textContent = `${Cm.toFixed(2)} mm`;
             document.getElementById('target-ratio-output').textContent = Rt.toFixed(5);
 
-            // 3. Find and store ALL combinations
             allCombinations = [];
             currentSetupIndex = 0;
 
-            // Brute force search for all combinations
             for (let B of STANDARD_GEARS) {
                 for (let A of STANDARD_GEARS) {
                     for (let D of STANDARD_GEARS) {
@@ -979,7 +1180,6 @@
                             const Ra = (B * A) / (D * C);
                             const error = Math.abs(Rt - Ra);
                             
-                            // Check for redundancy: avoid storing the same gear ratio multiple times
                             if (allCombinations.find(combo => Math.abs(combo.Ra - Ra) < 1e-9)) {
                                 continue;
                             }
@@ -990,35 +1190,49 @@
                 }
             }
 
-            // 4. Sort combinations by the absolute error (best first)
             allCombinations.sort((a, b) => a.error - b.error);
-
-            // Filter to only show results with reasonable accuracy (e.g., first 50 results)
             allCombinations = allCombinations.slice(0, 50);
 
-            // 5. Initial Display
             if (allCombinations.length > 0) {
                 displaySetup(currentSetupIndex);
                 resultDiv.classList.remove('hidden');
             } else {
-                 // The error message should also be translated, but this is a deep fallback
                  document.getElementById('error-message').textContent = TRANSLATIONS[document.getElementById('language-select').value].error_message; 
                  errorMessageDiv.classList.remove('hidden');
             }
         }
 
-        // Run setup on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('calculate-button');
+            btn.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple-el');
+                const rect = btn.getBoundingClientRect();
+                ripple.style.left = (e.clientX - rect.left) + 'px';
+                ripple.style.top  = (e.clientY - rect.top)  + 'px';
+                btn.appendChild(ripple);
+                btn.classList.add('spinning');
+                setTimeout(() => { ripple.remove(); btn.classList.remove('spinning'); }, 700);
+            });
+        });
+
+        function popGearValues() {
+            ['gear-a','gear-b','gear-c','gear-d'].forEach(id => {
+                const el = document.getElementById(id);
+                el.classList.remove('gear-value-pop');
+                void el.offsetWidth;
+                el.classList.add('gear-value-pop');
+            });
+        }
+
         window.onload = function() {
-            // Set default language to English and load translations
             const defaultLang = 'en';
             document.getElementById('language-select').value = defaultLang;
             changeLanguage(defaultLang);
-            
-            // Run calculation with default values for initial display
             calculate();
         };
 
-                function goToAbout() {
+        function goToAbout() {
             window.location.href = "about.html";
         }
 
