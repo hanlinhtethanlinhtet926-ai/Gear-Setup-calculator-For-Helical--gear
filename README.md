@@ -1,4 +1,4 @@
-# Helical Gear Calculator
+## Helical Gear Calculator
 
 ![Helical Gear](https://img.shields.io/badge/Type-Engineering_Calculator-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
