@@ -186,6 +186,25 @@ project-root/
 - Guide page includes practical examples
 - All styling is centralized in `styles.css`
 
+- # Project Updates & Changelog
+
+### v1.4.0 (Current)
+- **New Tool**: Added the Industrial Bolt Torque Calculator.
+- **New Tool**: Added the Gear Train Calculator.
+- **UI Update**: Implemented a central Dashboard for tool selection.
+- **Documentation**: Created `README.md` and `UPDATES.md`.
+
+### v1.3.0
+- **Credit System**: Integrated Firebase Firestore and LocalStorage for user credit management.
+- **Payment Gateway**: Added PayPal SDK integration for purchasing calculation credits.
+
+### v1.2.0
+- **Security**: Added Firebase Authentication (Login/Signup) and password strength indicators.
+- **Localization**: Expanded to 19-language support for the Helical Gear Calculator.
+
+### v1.1.0
+- **Core Logic**: Initial release of the Helical Gear Setup Calculator.
+
 ---
 
 **Last Updated:** June 2, 2026  
