@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Guide - Helical Gear Setup Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
+            color: #1f2937;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+            color: #e5e7eb;
+        }
+
+        .guide-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .guide-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeSlideDown 0.6s ease both;
+        }
+
+        .guide-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .guide-header p {
+            font-size: 1.1rem;
+            color: #6b7280;
+        }
+
+        body.dark-mode .guide-header p {
+            color: #d1d5db;
+        }
+
+        .guide-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .guide-section {
+            background: #1f2937;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .guide-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 12px rgba(99, 102, 241, 0.15);
+        }
+
+        .guide-section h2 {
+            font-size: 1.5rem;
+            color: #6366f1;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .guide-section h3 {
+            font-size: 1.1rem;
+            color: #3730a3;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        body.dark-mode .guide-section h3 {
+            color: #c7d2fe;
+        }
+
+        .guide-section p, .guide-section li {
+            line-height: 1.6;
+            color: #4b5563;
+            margin-bottom: 0.75rem;
+        }
+
+        body.dark-mode .guide-section p,
+        body.dark-mode .guide-section li {
+            color: #d1d5db;
+        }
+
+        .guide-section ul {
+            list-style-position: inside;
+            margin-left: 1rem;
+        }
+
+        .guide-section ol {
+            list-style-position: inside;
+            margin-left: 1rem;
+        }
+
+        .step-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(129, 140, 248, 0.05));
+            border-left: 4px solid #6366f1;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+
+        body.dark-mode .step-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(129, 140, 248, 0.1));
+        }
+
+        .example {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #1f2937;
+            overflow-x: auto;
+        }
+
+        body.dark-mode .example {
+            background: #374151;
+            border-color: #4b5563;
+            color: #e5e7eb;
+        }
+
+        .formula {
+            background: linear-gradient(135deg, #fef3c7 10%, #fef9e7 100%);
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-style: italic;
+            color: #92400e;
+        }
+
+        body.dark-mode .formula {
+            background: linear-gradient(135deg, #78350f 10%, #5a2e0a 100%);
+            border-color: #b45309;
+            color: #fef3c7;
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, #d1fae5 10%, #ecfdf5 100%);
+            border-left: 4px solid #10b981;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+
+        body.dark-mode .tip-box {
+            background: linear-gradient(135deg, #064e3b 10%, #047857 100%);
+            border-color: #10b981;
+            color: #d1fae5;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        body.dark-mode table {
+            background: #374151;
+        }
+
+        th {
+            background: #6366f1;
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        body.dark-mode td {
+            border-bottom-color: #4b5563;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        body.dark-mode tr:hover {
+            background: #4b5563;
+        }
+
+        .icon {
+            display: inline-block;
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes fadeSlideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .guide-container {
+                padding: 1rem;
+            }
+
+            .guide-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .guide-section {
+                padding: 1.25rem 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .guide-header { padding: 1.5rem 1rem; }
+            .guide-header h1 { font-size: 1.4rem; }
+            .guide-header p { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="index.html" class="navbar-brand">⚙️ Gear Calc</a>
+            <ul class="navbar-links">
+                <li><a href="index.html">Calculator</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="guide.html" class="active">Guide</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleDarkMode()">🌙</button>
+        </div>
+    </nav>
+
+    <div class="guide-container">
+        <!-- Header -->
+        <div class="guide-header">
+            <h1>⚙️ Tool Suite Manual</h1>
+            <p>Mastering the Engineering Calculation Modules</p>
+        </div>
+
+        <!-- Overview -->
+        <div class="guide-section">
+            <h2><span class="icon">🚀</span>Suite Overview</h2>
+            <p>This suite provides three professional-grade mechanical engineering modules. Access any module from your <strong>Dashboard</strong> using your account credits.</p>
+            <div class="step-box">
+                <h3>Credit System</h3>
+                <p>Calculations cost <strong>1 Credit</strong> per execution. You can top up your balance via the secure PayPal gateway on the Dashboard.</p>
+            </div>
+        </div>
+
+        <!-- Module 1: Helical Gear Setup -->
+        <div class="guide-section">
+            <h2><span class="icon">⚙️</span>1. Helical Gear Setup</h2>
+            <p>Determine the correct change gears for cutting helical gears on manual milling machines.</p>
+
+            <div class="step-box">
+                <h3>Required Inputs</h3>
+                <ul>
+                    <li><strong>Desired Lead:</strong> The helix length required (mm).</li>
+                    <li><strong>Leadscrew Pitch:</strong> Distance spindle travels per revolution (mm).</li>
+                    <li><strong>Dividing Head Ratio:</strong> Usually 40:1 for standard machines.</li>
+                </ul>
+            </div>
+            
+            <h3>Setup Logic</h3>
+            <div class="formula">
+                Gear Ratio = Desired Lead / (Leadscrew Pitch × Dividing Head Ratio)
+            </div>
+        </div>
+
+        <!-- Module 2: Gear Train Calculator -->
+        <div class="guide-section">
+            <h2><span class="icon">🔧</span>2. Gear Train Analysis</h2>
+            <p>Analyze multi-stage speed reduction or increase systems.</p>
+            <div class="step-box">
+                <h3>Analysis Features</h3>
+                <ul>
+                    <li><strong>Two-Stage Ratios:</strong> Input teeth counts for Pinion/Gear pairs.</li>
+                    <li><strong>Transverse Geometry:</strong> Calculated from Pressure and Helix angles.</li>
+                    <li><strong>Efficiency:</strong> Automatic estimation based on 98.5% efficiency per stage.</li>
+                </ul>
+            </div>
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> Leave optional second-stage fields blank to analyze a simple single-stage reduction.
+            </div>
+        </div>
+
+        <!-- Module 3: Bolt Torque Calculator -->
+        <div class="guide-section">
+            <h2><span class="icon"></span>3. Industrial Bolt Torque</h2>
+            <p>Determine clamping force and tightening requirements for structural fasteners.</p>
+            <div class="step-box">
+                <h3>The Nut Factor (K)</h3>
+                <p>Select the lubricant/coating to automatically set the K-factor:</p>
+                <ul>
+                    <li><strong>Dry Steel:</strong> K = 0.20</li>
+                    <li><strong>Lubricated:</strong> K = 0.15</li>
+                    <li><strong>Zinc-Plated:</strong> K = 0.22</li>
+                </ul>
+            </div>
+            <div class="formula">
+                Torque (T) = K × Diameter (D) × Preload Force (F)
+            </div>
+        </div>
+
+        <!-- Troubleshooting -->
+        <div class="guide-section">
+            <h2><span class="icon">🔧</span>Troubleshooting</h2>
+            <h3>Insufficient Credits</h3>
+            <p>If a calculation fails, check your balance on the dashboard. Credits are required for the server-side precision algorithms.</p>
+            <h3>Unit Mismatch</h3>
+            <p>Ensure you select between <strong>Metric</strong> and <strong>Imperial</strong> systems in the Bolt Torque module before entering values.</p>
+        </div>
+
+        <!-- Support -->
+        <div class="guide-section">
+            <h2><span class="icon">❓</span>Need More Help?</h2>
+
+            <p>Visit our resources:</p>
+            <ul>
+                <li><a href="about.html" style="color: #6366f1; text-decoration: none;">Learn More About Us</a></li> 
+                <li><a href="index.html" style="color: #6366f1; text-decoration: none;">Try the Calculator</a></li> 
+                <li><a href="mailto:hmystudio7@gmail.com" style="color: #6366f1; text-decoration: none;">Contact Support</a></li>
+            </ul>
+
+            <div class="tip-box">
+                <strong>💡 Pro Tip:</strong> Save this page as a PDF for quick reference in the workshop!
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Calculator</h3>
+                <a href="index.html">Helical Gear Tool</a>
+              <a href="guide.html">Quick Guide</a> 
+                <a href="#">Formula Reference</a>
+            </div>
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <a href="about.html">About Us</a>
+                <a href="#">Documentation</a>
+                <a href="#">FAQ</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="#">Contact Us</a>
+                <a href="#">Report Issue</a>
+                <a href="#">Feedback</a>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">License</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Helical Gear Calculator. All rights reserved. | Built with ❤️ for engineers</p>
+        </div>
+    </footer>
+
+    <script>
+        // Dark mode toggle
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+            updateThemeToggle();
+        }
+
+        function updateThemeToggle() {
+            const toggle = document.getElementById('themeToggle');
+            if (document.body.classList.contains('dark-mode')) {
+                toggle.textContent = '☀️';
+            } else {
+                toggle.textContent = '🌙';
+            }
+        }
+
+        // Load saved theme preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            updateThemeToggle();
+        }
+    </script>
+</body>
+</html>
