@@ -9,7 +9,6 @@
     <meta property="og:url" content="https://gear-setup-calculator-for-helical-g.vercel.app/">
     <link rel="icon" href="Gemini_Generated_Image_3wbe1r3wb (1).png">
 
-    <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="styles.css">
     <style>
@@ -313,50 +312,10 @@
             .mb-6.flex.justify-end { margin-bottom: 0.75rem; }
             table { font-size: 0.9rem; }
             td, th { padding: 0.5rem 0.6rem !important; }
-
-            /* Auth header: stack on mobile */
-            #authHeader {
-                flex-direction: column;
-                align-items: flex-start !important;
-                gap: 0.5rem;
-                padding: 0.75rem !important;
-            }
-            #authHeader .flex { flex-wrap: wrap; }
-            #userEmail { font-size: 0.8rem !important; word-break: break-all; }
-            #authHeader button { min-height: 36px; font-size: 0.8rem !important; padding: 0.4rem 0.75rem !important; }
-
-            /* Language selector: full width row */
-            .mb-6.flex.justify-end {
-                flex-wrap: wrap;
-                align-items: center;
-                gap: 0.25rem;
-            }
-            #language-select {
-                flex: 1;
-                min-width: 0;
-                font-size: 0.875rem;
-            }
-
-            /* Result section */
-            #result h2 { font-size: 1.25rem !important; flex-wrap: wrap; gap: 0.5rem; }
-            #setup-counter { font-size: 0.8rem !important; }
-
-            /* Navigation buttons: stack on very small screens */
-            .mt-4.flex.space-x-4 { gap: 0.5rem; }
-        }
-
-        @media (max-width: 380px) {
-            .mt-4.flex.space-x-4 {
-                flex-direction: column;
-            }
-            .mt-4.flex.space-x-4 button {
-                width: 100%;
-            }
         }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
-    <!-- Navigation -->
     <nav class="navbar">
         <div class="navbar-content">
             <a href="index.html" class="navbar-brand">⚙️ Gear Calc</a>
@@ -364,23 +323,25 @@
                 <li><a href="index.html" class="active">Calculator</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="login.html">Login</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
             </ul>
             <button class="theme-toggle" id="themeToggle" onclick="toggleDarkMode()">🌙</button>
         </div>
     </nav>
 
     <div class="flex-1 p-4 md:p-8">
-        <!-- Auth Header -->
         <div class="flex justify-between items-center mb-6 bg-white p-4 rounded-lg shadow-sm" id="authHeader">
             <div class="flex items-center space-x-4">
                 <span id="userEmail" class="text-sm font-medium text-gray-700"></span>
+                <span class="credit-pill bg-indigo-100 text-indigo-600 px-3 py-1 rounded-full text-sm">
+                    Credits: <span data-credit-balance>--</span>
+                </span>
             </div>
             <button onclick="logout()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors">
                 Logout
             </button>
         </div>
         
-        <!-- Language Selector -->
         <div class="mb-6 flex justify-end">
              <label for="language-select" class="text-sm font-medium text-gray-700 mr-2" data-lang-key="lang_label">Select Language:</label>
             <select id="language-select" onchange="changeLanguage(this.value)" class="px-2 py-1 border border-gray-300 rounded-lg shadow-sm text-sm">
@@ -413,7 +374,6 @@
             Enter your machine specifications and desired lead to calculate the change gears.
         </p>
 
-        <!-- Input Form -->
         <div class="space-y-6">
             
             <div>
@@ -452,7 +412,6 @@
             </button>
         </div>
 
-        <!-- Result Area -->
         <div id="result" class="mt-8 pt-6 border-t border-gray-200 hidden">
             <h2 class="text-2xl font-bold text-gray-800 mb-4 flex justify-between items-center">
                 <span data-lang-key="result_title">Calculation Results</span>
@@ -466,7 +425,6 @@
             Gear D = Spindle/stud gear
             </p>
             
-            <!-- Key Figures -->
             <div class="bg-indigo-50 p-4 rounded-lg mb-6 border border-indigo-200">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <p class="text-indigo-800 myanmar-text">
@@ -480,7 +438,6 @@
                 </div>
             </div>
 
-            <!-- Gear Setup Table -->
             <h3 class="text-xl font-semibold text-gray-800 mb-3 myanmar-text" data-lang-key="gear_setup_title">
                 Optimal Gear Set (B × A / D × C)
             </h3>
@@ -524,7 +481,6 @@
                 </table>
             </div>
 
-            <!-- Accuracy Summary -->
             <div class="mt-4 p-3 bg-yellow-50 rounded-lg text-sm border border-yellow-200">
                 <p class="font-semibold text-yellow-800 myanmar-text">
                     <span class="text-gray-800 font-bold" data-lang-key="actual_ratio_label">Actual Ratio:</span> 
@@ -540,7 +496,6 @@
                 </p>
             </div>
             
-            <!-- Navigation Buttons -->
             <div class="mt-4 flex space-x-4">
                 <button id="prev-setup-button" onclick="previousSetup()" disabled
                         class="flex-1 flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-150 ease-in-out opacity-50 cursor-not-allowed"
@@ -554,14 +509,12 @@
                 </button>
             </div>
 
-                        <div class="mt-4 flex space-x-4">
+            <div class="mt-4 flex space-x-4">
                 <button onclick="goToAbout()"
                         class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
                         data-lang-key="about_page">
                     About This Tool
                 </button>
-           
-
             </div>
             
             <div id="error-message" class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg hidden myanmar-text" data-lang-key="error_message">
@@ -707,7 +660,7 @@
                 gear_col_2: "Үүрэг",
                 gear_col_3: "Шүд (Z)",
                 driven: "Хөтлөгдөх 1",
-                driver: "Хөтлөх 1",
+                driver: "Хөтөх 1",
                 actual_ratio_label: "Бодит харьцаа:",
                 actual_lead_label: "Бодит алхам ($L_{\\text{Actual}}$):",
                 error_label: "Алдаа:",
@@ -746,7 +699,7 @@
             },
             'fr': {
                 title: "Calculateur d'Engrenages Hélicoïdaux",
-                subtitle: "Entrez les spécifications de votre machine et le pas désiré pour calculer les engrenages de changement.",
+                subtitle: "Entrez les spécifications de votre machine et le pas désiré pour calculer los engranajes de cambio.",
                 lang_label: "Sélectionner la langue:",
                 input_1_label: "1. Longueur d'Hélice Désirée (Pas, L) - (mm)",
                 input_2_label: "2. Pas de la Vis Mère ($P_{\\text{L}}$) - (mm)",
@@ -757,7 +710,7 @@
                 cm_label: "Constante de la Machine ($C_{\\text{m}}$):",
                 target_ratio_label: "Rapport Cible:",
                 gear_setup_title: "Jeu d'Engrenages Optimal (B × A / D × C)",
-                gear_col_1: "Engrenage",
+                gear_col_1: "Engranage",
                 gear_col_2: "Rôle",
                 gear_col_3: "Dents (Z)",
                 driven: "Mené 1",
@@ -819,7 +772,7 @@
                 actual_ratio_label: "वास्तविक अनुपात:",
                 actual_lead_label: "वास्तविक लीड ($L_{\\text{Actual}}$):",
                 error_label: "त्रुटि:",
-                next_setup: "अगला सेटअप",
+                next_setup: "अगला मुकाबला",
                 previous_setup: "पिछला सेटअप",
                 no_more_setups: "और सेटअप नहीं (समाप्त)",
                 error_message: "अमान्य इनपुट मान। कृपया इनपुट जांचें।",
@@ -1207,7 +1160,7 @@
             }
         }
 
-        function calculate() {
+        async function calculate() {
             const L = parseFloat(document.getElementById('lead').value);
             const P_L = parseFloat(document.getElementById('pitch').value);
             const R_DH = parseFloat(document.getElementById('ratio').value);
@@ -1219,6 +1172,19 @@
                 resultDiv.classList.add('hidden');
                 errorMessageDiv.classList.remove('hidden');
                 allCombinations = [];
+                return;
+            }
+
+            try {
+                const user = firebase.auth().currentUser;
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                await window.creditManager.deductCredit(user);
+            } catch (error) {
+                console.error('Credit deduction error:', error);
+                alert(error.message || 'Could not process credits. Please try again.');
                 return;
             }
 
@@ -1289,7 +1255,7 @@
             const defaultLang = 'en';
             document.getElementById('language-select').value = defaultLang;
             changeLanguage(defaultLang);
-            calculate();
+            // Auto-calculate call removed from here to prevent premature login redirect
         };
 
         function goToAbout() {
@@ -1298,33 +1264,32 @@
 
     </script>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-init.js"></script>
+    <script src="firebase-credits.js"></script>
 
     <script>
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyClXxbktaVECewBsDsIbaSb4CoONz_vCgM",
-            authDomain: "helical-gear-calculator.firebaseapp.com",
-            projectId: "helical-gear-calculator",
-            storageBucket: "helical-gear-calculator.firebasestorage.app",
-            messagingSenderId: "749204425723",
-            appId: "1:749204425723:web:0bcd0281916e8e4b20195e",
-            measurementId: "G-VYVM24TPJN"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
+        // Firebase is initialized by firebase-init.js
         const auth = firebase.auth();
 
         // Check authentication on page load
-        auth.onAuthStateChanged((user) => {
+        auth.onAuthStateChanged(async (user) => {
+            const authHeader = document.getElementById('authHeader');
             if (!user) {
-                // User not logged in, redirect to login page
+                // User not logged in, hide auth header and redirect to login page
+                authHeader.classList.add('hidden');
                 window.location.href = 'login.html';
             } else {
-                // User is logged in, display email
+                // User is logged in, display email and show auth header
                 document.getElementById('userEmail').textContent = 'Logged in as: ' + user.email;
+                authHeader.classList.remove('hidden');
+                try {
+                    await window.creditManager.ensureUserCredits(user);
+                } catch (error) {
+                    console.error('Credit load error:', error);
+                }
             }
         });
 
@@ -1339,7 +1304,6 @@
         }
     </script>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
@@ -1371,7 +1335,6 @@
             <p>&copy; 2026 Helical Gear Calculator. All rights reserved. | Built with ❤️ for engineers</p>
         </div>
     </footer>
-    </div>
 
     <script>
         // Dark mode toggle
@@ -1399,7 +1362,6 @@
 
 </body>
 </html>
-
 
 
 
