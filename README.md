@@ -62,6 +62,40 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+# Engineering Tool Suite - Helical Gear Calculator Web
+
+A professional-grade web application providing precise mechanical engineering calculations for machinists and engineers.
+
+## Features
+
+*   **Helical Gear Setup**: Calculate optimal change gear configurations for manual milling machines.
+*   **Gear Train Calculator**: Analyze multi-stage gear ratios, speeds, and system efficiency.
+*   **Bolt Torque Calculator**: Determine industrial tightening requirements based on friction factors and preload.
+*   **User Management**: Secure authentication via Firebase.
+*   **Credit System**: Professional "Pay-per-calculation" model with PayPal integration.
+*   **Multi-language Support**: Available in 19 languages including English, Myanmar, Thai, Russian, and more.
+*   **Responsive Design**: Fully optimized for both desktop and mobile workshop use.
+
+## Tech Stack
+
+*   **Frontend**: HTML5, CSS3 (Tailwind CSS for modern UI), Vanilla JavaScript.
+*   **Backend/BaaS**: Firebase (Authentication, Firestore).
+*   **Integrations**: PayPal JavaScript SDK.
+
+## Project Structure
+
+*   `index.html`: Helical Gear Calculator (Home).
+*   `dashboard.html`: Central hub for all tools and credit management.
+*   `Gear_Train_Calculator.html`: Multi-stage gear analysis tool.
+*   `Bolt Torque Calculator.html`: Industrial fastener torque tool.
+*   `firebase-credits.js`: Core logic for credit deduction and synchronization.
+
+## Developer
+
+**Hanlinhtet** - *X-plore Hone Acheive STUDIO*
+
+© 2026 All rights reserved.
+
 
 
 
