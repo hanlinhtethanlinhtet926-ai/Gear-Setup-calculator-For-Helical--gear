@@ -1,0 +1,41 @@
+.main-card {
+    border-top: 4px solid #6366f1;
+    transition: background 0.3s ease;
+}
+
+body.dark-mode .main-card {
+    background: #1f2937;
+    border-color: #818cf8;
+}
+
+body.dark-mode #chatContainer {
+    background: #111827;
+}
+
+body.dark-mode .bg-white {
+    background: #1f2937;
+    color: #f3f4f6;
+}
+
+body.dark-mode input {
+    background: #374151;
+    border-color: #4b5563;
+    color: white;
+}
+
+.message-bubble {
+    animation: slideUp 0.3s ease-out forwards;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#chatContainer::-webkit-scrollbar {
+    width: 6px;
+}
+#chatContainer::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+}

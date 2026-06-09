@@ -1,0 +1,26 @@
+who_made_you = HanLinHtet, made in Myanmar
+Company = X-plore Hone Achieve STUDIO
+Short company name = XHA STUDIO
+Social of tiktok = https://www.tiktok.com/@xha.studio
+Social of Youtube = https://www.youtube.com/@X-ploreHoneAchieveSTUDIO
+
+Available_tools = [
+    Helical Gear Setup Calculator,
+    Gear Train Calculator,
+    Bolt Torque Calculator 
+]
+
+Helical_Gear_Setup_Calculator_Details = {
+    Purpose = Calculate optimal change gear configurations for manual milling machines.
+    About = Computes optimal change gear configurations for manual milling machines by matching a target lead to available standard gear sets. Supports 19 languages and provides real-time error analysis.
+}
+
+Gear_Train_Calculator_Details = {
+    Purpose = Analyze multi-stage gear ratios, speeds, and system efficiency.
+    About = Analyzes multi-stage gear trains to determine output RPM, torque multipliers, pitch diameters, and system efficiency (est. 98.5% per stage) for helical gear systems.
+}
+
+Bolt_Torque_Calculator_Details = {
+    Purpose = Determine industrial tightening requirements based on friction factors and preload.
+    About = Determines industrial tightening requirements and torque specifications based on bolt dimensions, material friction factors (K-factors), and required preload to ensure fastener integrity.
+}
