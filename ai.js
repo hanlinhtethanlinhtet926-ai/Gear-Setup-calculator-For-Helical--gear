@@ -3,27 +3,51 @@ const userInput = document.getElementById("userInput");
 const chatContainer = document.getElementById("chatContainer");
 const sendBtn = document.getElementById("sendBtn");
 
-// Replace with your OpenRouter API Key
+// OpenRouter API Key
 const OPENROUTER_API_KEY = "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";
 
-const messages = [
-    {
-        role: "system",
-        content: `You are an Engineering AI Assistant specializing in:
-        - Helical gears
-        - Spur gears
-        - Gear ratios
-        - Torque calculations
-        - Mechanical engineering
-        - Materials engineering
-        - Manufacturing processes
-        
-        Give clear engineering explanations and formulas when needed.`
-    }
-];
+let messages = [];
+let brainLoaded = false;
 
+// Load Brain.txt
+async function loadBrain() {
+    try {
+        const response = await fetch("./Brain.txt");
+
+        if (!response.ok) {
+            throw new Error("Brain.txt not found");
+        }
+
+        const brainContent = await response.text();
+
+        messages = [
+            {
+                role: "system",
+                content: brainContent
+            }
+        ];
+
+        brainLoaded = true;
+
+        console.log("Brain.txt loaded successfully.");
+    } catch (error) {
+        console.error("Failed to load Brain.txt:", error);
+
+        messages = [
+            {
+                role: "system",
+                content: "You are an Engineering AI Assistant."
+            }
+        ];
+
+        brainLoaded = true;
+    }
+}
+
+// Add chat message
 function addMessage(text, isUser = false) {
     const wrapper = document.createElement("div");
+
     wrapper.className = isUser
         ? "flex justify-end"
         : "flex justify-start";
@@ -42,14 +66,16 @@ function addMessage(text, isUser = false) {
     chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
+// Typing indicator
 function addTypingIndicator() {
     const wrapper = document.createElement("div");
+
     wrapper.className = "flex justify-start";
     wrapper.id = "typingIndicator";
 
     wrapper.innerHTML = `
         <div class="bg-white border border-indigo-100 p-4 rounded-2xl rounded-tl-none shadow-sm">
-            Thinking...
+            🤖 Thinking...
         </div>
     `;
 
@@ -59,9 +85,13 @@ function addTypingIndicator() {
 
 function removeTypingIndicator() {
     const typing = document.getElementById("typingIndicator");
-    if (typing) typing.remove();
+
+    if (typing) {
+        typing.remove();
+    }
 }
 
+// Ask AI
 async function askAI(prompt) {
     try {
         addTypingIndicator();
@@ -96,7 +126,12 @@ async function askAI(prompt) {
 
         if (!response.ok) {
             console.error(data);
-            addMessage("❌ Error: " + (data.error?.message || "Unknown error"));
+
+            addMessage(
+                "❌ Error: " +
+                (data.error?.message || "Unknown error")
+            );
+
             return;
         }
 
@@ -110,15 +145,24 @@ async function askAI(prompt) {
         });
 
         addMessage(aiReply);
+
     } catch (error) {
-        removeTypingIndicator();
         console.error(error);
+
+        removeTypingIndicator();
+
         addMessage("❌ Failed to contact AI service.");
     }
 }
 
+// Form submit
 aiForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+
+    if (!brainLoaded) {
+        addMessage("⚠️ Brain.txt is still loading.");
+        return;
+    }
 
     const prompt = userInput.value.trim();
 
@@ -127,12 +171,14 @@ aiForm.addEventListener("submit", async (e) => {
     addMessage(prompt, true);
 
     userInput.value = "";
+
     sendBtn.disabled = true;
     sendBtn.textContent = "Sending...";
 
     await askAI(prompt);
 
     sendBtn.disabled = false;
+
     sendBtn.innerHTML = `
         Send
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -143,3 +189,7 @@ aiForm.addEventListener("submit", async (e) => {
     `;
 });
 
+// Initialize
+window.addEventListener("load", async () => {
+    await loadBrain();
+});
