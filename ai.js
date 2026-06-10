@@ -4,7 +4,7 @@ const chatContainer = document.getElementById("chatContainer");
 const sendBtn = document.getElementById("sendBtn");
 
 // OpenRouter API Key
-const OPENROUTER_API_KEY = "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";
+const OPENROUTER_API_KEY = "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";
 
 let messages = [];
 let brainLoaded = false;
