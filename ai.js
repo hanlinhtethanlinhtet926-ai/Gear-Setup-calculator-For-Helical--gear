@@ -4,7 +4,7 @@ const chatContainer = document.getElementById("chatContainer");
 const sendBtn = document.getElementById("sendBtn");
 
 // Replace with your OpenRouter API Key
-const OPENROUTER_API_KEY = "YOUR_OPENROUTER_API_KEY";
+const OPENROUTER_API_KEY = "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";
 
 const messages = [
     {
