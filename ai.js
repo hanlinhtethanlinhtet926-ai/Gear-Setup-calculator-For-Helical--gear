@@ -142,4 +142,4 @@ aiForm.addEventListener("submit", async (e) => {
         </svg>
     `;
 });
-});
+
