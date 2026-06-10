@@ -7,7 +7,7 @@ Social of Youtube = https://www.youtube.com/@X-ploreHoneAchieveSTUDIO
 Available_tools = [
     Helical Gear Setup Calculator,
     Gear Train Calculator,
-    Bolt Torque Calculator 
+    Bolt Torque Calculator, 
 ]
 
 Helical_Gear_Setup_Calculator_Details = {
