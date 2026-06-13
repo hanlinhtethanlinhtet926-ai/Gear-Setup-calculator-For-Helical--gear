@@ -14,9 +14,13 @@
     <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebSite",
+  "@type": "WebApplication",
   "name": "Helical Gear Calculator",
-  "url": "https://gear-setup-calculator-for-helical-g.vercel.app/"
+  "url": "https://gear-setup-calculator-for-helical-g.vercel.app/",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "All",
+  "browserRequirements": "Requires JavaScript. Requires HTML5.",
+  "description": "Helical Gear Calculator is a powerful and easy-to-use tool designed for engineers, students, and mechanical enthusiasts. Calculate important helical gear parameters such as module, pitch diameter, helix angle, center distance, gear ratio, tooth dimensions, and rotational speed with accuracy and speed."
 }
 </script>
     <link rel="stylesheet" href="styles.css">
@@ -680,7 +684,7 @@
                 example: "Жишээ:",
             },
             'es': {
-                title: "Calculadora de Engranajes Helicoidales",
+                title: "Calculadora de Engrenajes Helicoidales",
                 subtitle: "Ingrese las especificaciones de su máquina y el avance deseado para calcular los engranajes de cambio.",
                 lang_label: "Seleccionar idioma:",
                 input_1_label: "1. Longitud de Hélice Deseada (Avance, L) - (mm)",
@@ -793,7 +797,7 @@
                 lang_label: "Selecteer Taal:",
                 input_1_label: "1. Gewenste Helix Lengte (Spoed, L) - (mm)",
                 input_2_label: "2. Spoed van de Hoofdspindel ($P_{\\text{L}}$) - (mm)",
-                input_3_label: "3. Overbrengingsverhouding Verdeelkop ($R_{\\text{DH}}$)",
+                input_3_label: "3. Overbreงingsverhouding Verdeelkop ($R_{\\text{DH}}$)",
                 button_calculate: "Bereken Tandwielen",
                 result_title: "Berekeningsresultaten",
                 setup_counter: "Opstelling",
@@ -1361,7 +1365,6 @@
                 toggle.textContent = '🌙';
             }
         }
-
         // Load saved theme preference
         if (localStorage.getItem('darkMode') === 'true') {
             document.body.classList.add('dark-mode');
@@ -1371,6 +1374,5 @@
 
 </body>
 </html>
-
 
 
