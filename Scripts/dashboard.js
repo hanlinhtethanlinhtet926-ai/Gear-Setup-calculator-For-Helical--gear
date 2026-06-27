@@ -27,7 +27,7 @@ function setupDashboard() {
 
     if (guideBtn) {
         guideBtn.addEventListener('click', function() {
-            window.location.href = 'guide.html'; // Assumes it's in the same HTML folder
+            window.location.href = '/HTML/guide.html'; // Assumes it's in the same HTML folder
         });
     }
 
