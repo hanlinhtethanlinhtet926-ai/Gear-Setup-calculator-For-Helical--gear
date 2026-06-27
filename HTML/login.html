@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Helical Gear Setup Calculator</title>
+    <link rel="stylesheet" href="../Styles/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .login-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        body.dark-mode .login-wrapper {
+            background: linear-gradient(135deg, #4c1d95 0%, #3b0764 100%);
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body.dark-mode .login-container {
+            background: #1f2937;
+            color: #e5e7eb;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        body.dark-mode .login-header h1 {
+            color: #f9fafb;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        body.dark-mode .login-header p {
+            color: #d1d5db;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        body.dark-mode .form-group label {
+            color: #e5e7eb;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px; /* prevents iOS auto-zoom */
+            transition: border-color 0.3s;
+            background: white;
+            color: #333;
+        }
+
+        body.dark-mode .form-group input {
+            background: #374151;
+            color: #e5e7eb;
+            border-color: #4b5563;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: -15px;
+            margin-bottom: 10px;
+        }
+
+        .forgot-password a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        body.dark-mode .forgot-password a {
+            color: #818cf8;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        body.dark-mode .signup-link {
+            color: #d1d5db;
+        }
+
+        .signup-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        body.dark-mode .signup-link a {
+            color: #818cf8;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .divider {
+            margin: 20px 0;
+            text-align: center;
+            color: #ccc;
+            font-size: 12px;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .success-message {
+            color: #28a745;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+        }
+
+        body.dark-mode .divider {
+            color: #4b5563;
+        }
+
+        body.dark-mode .error-message {
+            color: #fca5a5;
+            background: rgba(220, 53, 69, 0.15);
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        body.dark-mode .success-message {
+            color: #86efac;
+            background: rgba(40, 167, 69, 0.15);
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+
+        body.dark-mode .loading {
+            color: #818cf8;
+        }
+
+        /* Mobile */
+        @media (max-width: 480px) {
+            body {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+            }
+
+            body.dark-mode {
+                background: linear-gradient(135deg, #4c1d95 0%, #3b0764 100%);
+            }
+
+            .login-wrapper {
+                padding: 1rem;
+                min-height: 100vh;
+            }
+
+            .login-container {
+                padding: 30px 20px;
+                max-width: 100%;
+                width: 100%;
+                max-height: calc(100vh - 80px);
+                overflow-y: auto;
+            }
+
+            .login-header {
+                margin-bottom: 20px;
+            }
+
+            .login-header h1 {
+                font-size: 24px;
+                margin-bottom: 8px;
+            }
+
+            .login-header p {
+                font-size: 12px;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+            .form-group label {
+                font-size: 12px;
+                margin-bottom: 6px;
+            }
+
+            .form-group input {
+                padding: 10px;
+                font-size: 14px;
+                min-height: 44px;
+            }
+
+            .login-btn {
+                padding: 12px;
+                font-size: 14px;
+                margin-top: 8px;
+            }
+
+            .forgot-password {
+                margin-top: -10px;
+                margin-bottom: 8px;
+            }
+
+            .forgot-password a {
+                font-size: 11px;
+            }
+
+            .divider {
+                margin: 15px 0;
+                font-size: 11px;
+            }
+
+            .signup-link {
+                margin-top: 12px;
+                font-size: 12px;
+            }
+
+            .error-message,
+            .success-message {
+                font-size: 12px;
+                margin-top: 8px;
+                padding: 8px;
+            }
+
+            .loading {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="../index.html" class="navbar-brand">⚙️ Gear Calc</a>
+            <ul class="navbar-links">
+                <li><a href="../index.html">Calculator</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="login.html" class="active">Login</a></li>
+            </ul>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleDarkMode()">🌙</button>
+        </div>
+    </nav>
+
+    <div class="login-wrapper">
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Login</h1>
+            <p>Helical Gear Setup Calculator</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="Enter your email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter your password" required>
+            </div>
+
+            <div class="forgot-password">
+                <a href="#" onclick="showForgotPasswordModal(event)">Forgot password?</a>
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+            <div class="loading" id="loading">Logging in...</div>
+
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+
+        <div class="divider">OR</div>
+
+        <div class="signup-link">
+            Don't have an account? <a href="signup.html">Sign Up</a>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgotPasswordModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;">
+        <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); width: 100%; max-width: 350px;">
+            <h2 style="color: #333; margin-bottom: 10px; font-size: 20px;">Reset Password</h2>
+            <p style="color: #666; font-size: 13px; margin-bottom: 20px;">Enter your email address and we'll send you a password reset link.</p>
+            
+            <input type="email" id="resetEmail" placeholder="Enter your email" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; margin-bottom: 15px;">
+            
+            <div id="resetError" style="color: #dc3545; font-size: 13px; margin-bottom: 10px; display: none;"></div>
+            <div id="resetSuccess" style="color: #28a745; font-size: 13px; margin-bottom: 10px; display: none;"></div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button onclick="resetPassword()" style="flex: 1; padding: 10px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600;">Send Reset Link</button>
+                <button onclick="closeForgotPasswordModal()" style="flex: 1; padding: 10px; background: #ccc; color: #333; border: none; border-radius: 5px; cursor: pointer; font-weight: 600;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-compat.js"></script>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyClXxbktaVECewBsDsIbaSb4CoONz_vCgM",
+            authDomain: "helical-gear-calculator.firebaseapp.com",
+            projectId: "helical-gear-calculator",
+            storageBucket: "helical-gear-calculator.firebasestorage.app",
+            messagingSenderId: "749204425723",
+            appId: "1:749204425723:web:0bcd0281916e8e4b20195e",
+            measurementId: "G-VYVM24TPJN"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Form Elements
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const loading = document.getElementById('loading');
+        const loginBtn = document.querySelector('.login-btn');
+
+        // Handle Login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            // Clear previous messages
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+
+            if (!email || !password) {
+                errorMessage.textContent = 'Please fill in all fields';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            try {
+                loading.style.display = 'block';
+                loginBtn.disabled = true;
+
+                // Sign in with Firebase
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                
+                successMessage.textContent = 'Login successful! Redirecting...';
+                successMessage.style.display = 'block';
+
+                // Redirect to index page after successful login
+                setTimeout(() => {
+                    window.location.href = '../index.html';
+                }, 1500);
+
+            } catch (error) {
+                loading.style.display = 'none';
+                loginBtn.disabled = false;
+
+                let errorText = 'An error occurred';
+
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        errorText = 'No account found with this email';
+                        break;
+                    case 'auth/wrong-password':
+                        errorText = 'Incorrect password';
+                        break;
+                    case 'auth/invalid-email':
+                        errorText = 'Invalid email address';
+                        break;
+                    case 'auth/user-disabled':
+                        errorText = 'This account has been disabled';
+                        break;
+                    default:
+                        errorText = error.message;
+                }
+
+                errorMessage.textContent = errorText;
+                errorMessage.style.display = 'block';
+            }
+        });
+
+        // Check if user is already logged in
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                window.location.href = '../index.html';
+            }
+        });
+
+        // Forgot Password Functions
+        function showForgotPasswordModal(e) {
+            e.preventDefault();
+            document.getElementById('forgotPasswordModal').style.display = 'flex';
+        }
+
+        function closeForgotPasswordModal() {
+            document.getElementById('forgotPasswordModal').style.display = 'none';
+            document.getElementById('resetEmail').value = '';
+            document.getElementById('resetError').style.display = 'none';
+            document.getElementById('resetSuccess').style.display = 'none';
+        }
+
+        function resetPassword() {
+            const email = document.getElementById('resetEmail').value.trim();
+            const resetError = document.getElementById('resetError');
+            const resetSuccess = document.getElementById('resetSuccess');
+
+            resetError.style.display = 'none';
+            resetSuccess.style.display = 'none';
+
+            if (!email) {
+                resetError.textContent = 'Please enter your email address';
+                resetError.style.display = 'block';
+                return;
+            }
+
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    resetSuccess.textContent = 'Password reset email sent! Check your inbox.';
+                    resetSuccess.style.display = 'block';
+                    setTimeout(() => {
+                        closeForgotPasswordModal();
+                    }, 2000);
+                })
+                .catch((error) => {
+                    let errorText = 'Error sending reset email';
+                    if (error.code === 'auth/user-not-found') {
+                        errorText = 'No account found with this email';
+                    }
+                    resetError.textContent = errorText;
+                    resetError.style.display = 'block';
+                });
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('forgotPasswordModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeForgotPasswordModal();
+            }
+        });
+    </script>
+
+    </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Calculator</h3>
+                <a href="../index.html">Helical Gear Tool</a>
+                <a href="#">Quick Guide</a>
+                <a href="#">Formula Reference</a>
+            </div>
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <a href="about.html">About Us</a>
+                <a href="#">Documentation</a>
+                <a href="#">FAQ</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="#">Contact Us</a>
+                <a href="#">Report Issue</a>
+                <a href="#">Feedback</a>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">License</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Helical Gear Calculator. All rights reserved. | Built with ❤️ for engineers</p>
+        </div>
+    </footer>
+
+    <script>
+        // Dark mode toggle
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+            updateThemeToggle();
+        }
+
+        function updateThemeToggle() {
+            const toggle = document.getElementById('themeToggle');
+            if (document.body.classList.contains('dark-mode')) {
+                toggle.textContent = '☀️';
+            } else {
+                toggle.textContent = '🌙';
+            }
+        }
+
+        // Load saved theme preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            updateThemeToggle();
+        }
+    </script>
+</body>
+</html>
+    </script>
+</body>
+</html>

@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Helical Gear Setup Calculator</title>
+    <link rel="stylesheet" href="../Styles/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .signup-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        body.dark-mode .signup-wrapper {
+            background: linear-gradient(135deg, #4c1d95 0%, #3b0764 100%);
+        }
+
+        .signup-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body.dark-mode .signup-container {
+            background: #1f2937;
+            color: #e5e7eb;
+        }
+
+        .signup-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .signup-header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        body.dark-mode .signup-header h1 {
+            color: #f9fafb;
+        }
+
+        .signup-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        body.dark-mode .signup-header p {
+            color: #d1d5db;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        body.dark-mode .form-group label {
+            color: #e5e7eb;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px; /* prevents iOS auto-zoom */
+            transition: border-color 0.3s;
+            background: white;
+            color: #333;
+        }
+
+        body.dark-mode .form-group input {
+            background: #374151;
+            color: #e5e7eb;
+            border-color: #4b5563;
+        }
+
+        .password-strength {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        body.dark-mode .password-strength {
+            color: #d1d5db;
+        }
+
+        .strength-meter {
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+
+        body.dark-mode .strength-meter {
+            background: #4b5563;
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s, background-color 0.3s;
+            background-color: #dc3545;
+        }
+
+        .strength-bar.weak {
+            width: 33%;
+            background-color: #dc3545;
+        }
+
+        .strength-bar.fair {
+            width: 66%;
+            background-color: #ffc107;
+        }
+
+        .strength-bar.strong {
+            width: 100%;
+            background-color: #28a745;
+        }
+
+        .terms-checkbox a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        body.dark-mode .terms-checkbox a {
+            color: #818cf8;
+        }
+
+        .terms-checkbox a:hover {
+            text-decoration: underline;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        body.dark-mode .login-link {
+            color: #d1d5db;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        body.dark-mode .login-link a {
+            color: #818cf8;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .signup-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .signup-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .signup-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .signup-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+            padding: 10px;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+        }
+
+        .success-message {
+            color: #28a745;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+            padding: 10px;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 4px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+        }
+        /* Mobile */
+        @media (max-width: 480px) {
+            .signup-wrapper {
+                padding: 1rem;
+                align-items: flex-start;
+                padding-top: 1.5rem;
+            }
+            .signup-container {
+                padding: 24px 18px;
+                max-width: 100%;
+                width: 100%;
+                border-radius: 10px;
+            }
+            .signup-header h1 { font-size: 22px; }
+            .signup-header p { font-size: 13px; }
+            .form-group input {
+                padding: 10px 12px;
+                font-size: 16px; /* prevents iOS zoom */
+                min-height: 44px;
+            }
+            .signup-btn {
+                padding: 13px;
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="../index.html" class="navbar-brand">⚙️ Gear Calc</a>
+            <ul class="navbar-links">
+                <li><a href="../index.html">Calculator</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleDarkMode()">🌙</button>
+        </div>
+    </nav>
+
+    <div class="signup-wrapper">
+    <div class="signup-container">
+        <div class="signup-header">
+            <h1>Create Account</h1>
+            <p>Helical Gear Setup Calculator</p>
+        </div>
+
+        <form id="signupForm">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="Enter your email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter your password" required>
+                <div class="password-strength">
+                    Password strength: <span id="strengthText">weak</span>
+                    <div class="strength-meter">
+                        <div class="strength-bar" id="strengthBar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+            </div>
+
+            <div class="terms-checkbox">
+                <input type="checkbox" id="terms" required>
+                <label for="terms">
+                    I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                </label>
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+            <div class="loading" id="loading">Creating account...</div>
+
+            <button type="submit" class="signup-btn" id="signupBtn">Create Account</button>
+        </form>
+
+        <div class="login-link">
+            Already have an account? <a href="login.html">Login</a>
+        </div>
+    </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Calculator</h3>
+                <a href="../index.html">Helical Gear Tool</a>
+                <a href="#">Quick Guide</a>
+                <a href="#">Formula Reference</a>
+            </div>
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <a href="about.html">About Us</a>
+                <a href="#">Documentation</a>
+                <a href="#">FAQ</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="#">Contact Us</a>
+                <a href="#">Report Issue</a>
+                <a href="#">Feedback</a>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">License</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Helical Gear Calculator. All rights reserved. | Built with ❤️ for engineers</p>
+        </div>
+    </footer>
+
+    <script>
+        // Dark mode toggle
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+            updateThemeToggle();
+        }
+
+        function updateThemeToggle() {
+            const toggle = document.getElementById('themeToggle');
+            if (document.body.classList.contains('dark-mode')) {
+                toggle.textContent = '☀️';
+            } else {
+                toggle.textContent = '🌙';
+            }
+        }
+
+        // Load saved theme preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            updateThemeToggle();
+        }
+    </script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-compat.js"></script>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyClXxbktaVECewBsDsIbaSb4CoONz_vCgM",
+            authDomain: "helical-gear-calculator.firebaseapp.com",
+            projectId: "helical-gear-calculator",
+            storageBucket: "helical-gear-calculator.firebasestorage.app",
+            messagingSenderId: "749204425723",
+            appId: "1:749204425723:web:0bcd0281916e8e4b20195e",
+            measurementId: "G-VYVM24TPJN"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Form Elements
+        const signupForm = document.getElementById('signupForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const termsCheckbox = document.getElementById('terms');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const loading = document.getElementById('loading');
+        const signupBtn = document.getElementById('signupBtn');
+        const strengthBar = document.getElementById('strengthBar');
+        const strengthText = document.getElementById('strengthText');
+
+        // Password strength indicator
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/\d/.test(password)) strength++;
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+
+            strengthBar.classList.remove('weak', 'fair', 'strong');
+
+            if (strength === 0 || strength === 1) {
+                strengthBar.classList.add('weak');
+                strengthText.textContent = 'weak';
+            } else if (strength === 2 || strength === 3) {
+                strengthBar.classList.add('fair');
+                strengthText.textContent = 'fair';
+            } else {
+                strengthBar.classList.add('strong');
+                strengthText.textContent = 'strong';
+            }
+        });
+
+        // Handle Signup
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+
+            // Clear previous messages
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+
+            // Validation
+            if (!email || !password || !confirmPassword) {
+                errorMessage.textContent = 'Please fill in all fields';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (password.length < 6) {
+                errorMessage.textContent = 'Password must be at least 6 characters long';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (!termsCheckbox.checked) {
+                errorMessage.textContent = 'Please agree to the Terms of Service and Privacy Policy';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            try {
+                loading.style.display = 'block';
+                signupBtn.disabled = true;
+
+                // Create user with Firebase
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+
+                // Optional: Send verification email
+                await userCredential.user.sendEmailVerification();
+
+                successMessage.textContent = 'Account created successfully! Redirecting to login...';
+                successMessage.style.display = 'block';
+
+                // Redirect to login after successful signup
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+
+            } catch (error) {
+                loading.style.display = 'none';
+                signupBtn.disabled = false;
+
+                let errorText = 'An error occurred';
+
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        errorText = 'This email is already registered';
+                        break;
+                    case 'auth/weak-password':
+                        errorText = 'Password is too weak. Use at least 6 characters with letters, numbers, and symbols';
+                        break;
+                    case 'auth/invalid-email':
+                        errorText = 'Invalid email address';
+                        break;
+                    default:
+                        errorText = error.message;
+                }
+
+                errorMessage.textContent = errorText;
+                errorMessage.style.display = 'block';
+            }
+        });
+
+        // Check if user is already logged in
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                window.location.href = '../index.html';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Gear Calculator</title>
+    <link rel="stylesheet" href="../Styles/dashboard.css">
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-container">
+            <h1 class="navbar-title">Gear Calculator Dashboard</h1>
+            <div class="navbar-actions">
+                <div class="credits-display">Credits: <span data-credit-balance>--</span></div>
+                <button class="about-btn" id="guideBtn">Guide</button>
+                <button class="about-btn" id="aboutBtn">About</button>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="dashboard-header">
+            <h2>Welcome to Your Tools</h2>
+            <p>Select a calculator to get started</p>
+        </div>
+
+        <section class="credits-shop" aria-labelledby="creditsShopTitle">
+            <div class="shop-header">
+                <div>
+                    <h2 id="creditsShopTitle">Buy Credits</h2>
+                    <p>Choose a package and pay securely with PayPal.</p>
+                </div>
+                <div class="shop-balance">Balance: <span data-credit-balance>--</span></div>
+            </div>
+
+            <div class="purchase-message" id="purchaseMessage" role="status"></div>
+
+            <div class="credit-packages">
+                <article class="credit-package">
+                    <h3>100 Credits</h3>
+                    <p class="package-price">$5</p>
+                    <div class="paypal-button" id="paypal-credits-100"></div>
+                </article>
+
+                <article class="credit-package">
+                    <h3>200 Credits</h3>
+                    <p class="package-price">$10</p>
+                    <div class="paypal-button" id="paypal-credits-200"></div>
+                </article>
+
+                <article class="credit-package">
+                    <h3>500 Credits</h3>
+                    <p class="package-price">$25</p>
+                    <div class="paypal-button" id="paypal-credits-500"></div>
+                </article>
+
+                <article class="credit-package">
+                    <h3>1000 Credits</h3>
+                    <p class="package-price">$50</p>
+                    <div class="paypal-button" id="paypal-credits-1000"></div>
+                </article>
+            </div>
+        </section>
+
+        <div class="cards-grid">
+            <!-- Helical Gear Setup Calculator Card -->
+            <div class="card" id="helicalCard">
+                <div class="card-icon">⚙️</div>
+                <h3 class="card-title">Helical Gear Setup Calculator</h3>
+                <p class="card-description">Calculate and optimize helical gear configurations for your mechanical systems</p>
+                <div class="card-features">
+                    <ul>
+                        <li>Gear geometry calculations</li>
+                        <li>Setup parameters</li>
+                        <li>Load analysis</li>
+                    </ul>
+                </div>
+                <button class="card-btn" onclick="location.href='../index.html'">Open Calculator</button>
+            </div>
+
+            <!-- Gear Train Calculator Card -->
+            <div class="card" id="gearTrainCard">
+                <div class="card-icon">🔧</div>
+                <h3 class="card-title">Gear Train Calculator</h3>
+                <p class="card-description">Design and analyze multi-stage gear trains with comprehensive calculations</p>
+                <div class="card-features">
+                    <ul>
+                        <li>Multi-stage ratios</li>
+                        <li>Speed calculations</li>
+                        <li>Efficiency analysis</li>
+                    </ul>
+                </div>
+                <button class="card-btn" onclick="location.href='Gear_Train_Calculator.html'">Open Calculator</button>
+            </div>
+
+                <div class="card" id="boltTorqueCard">
+                <div class="card-icon">🔩</div>
+                <h3 class="card-title">Bolt Torque Calculator</h3>
+                <p class="card-description">Calculate the required torque for tightening bolts in various applications</p>
+                <div class="card-features">
+                    <ul>
+                        <li>Multi-stage ratios</li>
+                        <li>Speed calculations</li>
+                        <li>Efficiency analysis</li>
+                    </ul>
+                </div>
+                <button class="card-btn" onclick="location.href='Bolt Torque Calculator.html'">Open Calculator</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    <script src="../Scripts/firebase-init.js"></script>
+    <script src="../Scripts/firebase-credits.js"></script>
+    <script src="../Scripts/dashboard.js"></script>
+</body>
+</html>

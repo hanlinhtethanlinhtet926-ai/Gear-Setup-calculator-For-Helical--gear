@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Guide - Helical Gear Setup Calculator</title>
+    <link rel="stylesheet" href="../Styles/styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
+            color: #1f2937;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+            color: #e5e7eb;
+        }
+
+        .guide-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .guide-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeSlideDown 0.6s ease both;
+        }
+
+        .guide-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .guide-header p {
+            font-size: 1.1rem;
+            color: #6b7280;
+        }
+
+        body.dark-mode .guide-header p {
+            color: #d1d5db;
+        }
+
+        .guide-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .guide-section {
+            background: #1f2937;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .guide-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 12px rgba(99, 102, 241, 0.15);
+        }
+
+        .guide-section h2 {
+            font-size: 1.5rem;
+            color: #6366f1;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .guide-section h3 {
+            font-size: 1.1rem;
+            color: #3730a3;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        body.dark-mode .guide-section h3 {
+            color: #c7d2fe;
+        }
+
+        .guide-section p, .guide-section li {
+            line-height: 1.6;
+            color: #4b5563;
+            margin-bottom: 0.75rem;
+        }
+
+        body.dark-mode .guide-section p,
+        body.dark-mode .guide-section li {
+            color: #d1d5db;
+        }
+
+        .guide-section ul {
+            list-style-position: inside;
+            margin-left: 1rem;
+        }
+
+        .guide-section ol {
+            list-style-position: inside;
+            margin-left: 1rem;
+        }
+
+        .step-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(129, 140, 248, 0.05));
+            border-left: 4px solid #6366f1;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+
+        body.dark-mode .step-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(129, 140, 248, 0.1));
+        }
+
+        .example {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #1f2937;
+            overflow-x: auto;
+        }
+
+        body.dark-mode .example {
+            background: #374151;
+            border-color: #4b5563;
+            color: #e5e7eb;
+        }
+
+        .formula {
+            background: linear-gradient(135deg, #fef3c7 10%, #fef9e7 100%);
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-style: italic;
+            color: #92400e;
+        }
+
+        body.dark-mode .formula {
+            background: linear-gradient(135deg, #78350f 10%, #5a2e0a 100%);
+            border-color: #b45309;
+            color: #fef3c7;
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, #d1fae5 10%, #ecfdf5 100%);
+            border-left: 4px solid #10b981;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+
+        body.dark-mode .tip-box {
+            background: linear-gradient(135deg, #064e3b 10%, #047857 100%);
+            border-color: #10b981;
+            color: #d1fae5;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        body.dark-mode table {
+            background: #374151;
+        }
+
+        th {
+            background: #6366f1;
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        body.dark-mode td {
+            border-bottom-color: #4b5563;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        body.dark-mode tr:hover {
+            background: #4b5563;
+        }
+
+        .icon {
+            display: inline-block;
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes fadeSlideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .guide-container {
+                padding: 1rem;
+            }
+
+            .guide-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .guide-section {
+                padding: 1.25rem 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .guide-header { padding: 1.5rem 1rem; }
+            .guide-header h1 { font-size: 1.4rem; }
+            .guide-header p { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="../index.html" class="navbar-brand">⚙️ Gear Calc</a>
+            <ul class="navbar-links">
+                <li><a href="../index.html">Calculator</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="guide.html" class="active">Guide</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleDarkMode()">🌙</button>
+        </div>
+    </nav>
+
+    <div class="guide-container">
+        <!-- Header -->
+        <div class="guide-header">
+            <h1>⚙️ Quick Reference Guide</h1>
+            <p>Master the Helical Gear Setup Calculator</p>
+        </div>
+
+        <!-- Getting Started -->
+        <div class="guide-section">
+            <h2><span class="icon">🚀</span>Getting Started</h2>
+            <p>The Helical Gear Setup Calculator helps you determine the correct change gears for cutting helical gears on a manual milling machine with a dividing head.</p>
+            
+            <h3>What You Need to Know</h3>
+            <ul>
+                <li><strong>Desired Lead:</strong> The pitch of the helix you want to cut (in mm)</li>
+                <li><strong>Leadscrew Pitch:</strong> The pitch of your machine's leadscrew (typically 4-5 mm for metric machines)</li>
+                <li><strong>Dividing Head Ratio:</strong> The gear ratio of your dividing head (usually 40:1)</li>
+            </ul>
+
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> Most manual milling machines use standard specifications. Check your machine manual for exact values if unsure.
+            </div>
+        </div>
+
+        <!-- Step-by-Step Guide -->
+        <div class="guide-section">
+            <h2><span class="icon">📋</span>Step-by-Step Instructions</h2>
+
+            <div class="step-box">
+                <h3>Step 1: Enter the Desired Lead</h3>
+                <p>Input the helix length you want to cut. This is measured in millimeters. Common values range from 30 mm to 100 mm.</p>
+                <div class="example">Example: 56.0 mm</div>
+            </div>
+
+            <div class="step-box">
+                <h3>Step 2: Set Leadscrew Pitch</h3>
+                <p>Enter the pitch of your machine's leadscrew. This is the distance the spindle travels for one complete revolution.</p>
+                <div class="example">Example: 4.5 mm (typical for metric machines)</div>
+            </div>
+
+            <div class="step-box">
+                <h3>Step 3: Specify Dividing Head Ratio</h3>
+                <p>Enter the gear ratio of your dividing head. This determines how many turns are needed for one complete spindle revolution.</p>
+                <div class="example">Example: 40:1 (most common)</div>
+            </div>
+
+            <div class="step-box">
+                <h3>Step 4: Click Calculate</h3>
+                <p>Press the "Calculate Gears" button to get your optimal gear combination.</p>
+            </div>
+        </div>
+
+        <!-- Understanding Results -->
+        <div class="guide-section">
+            <h2><span class="icon">📊</span>Understanding the Results</h2>
+
+            <h3>Gear Set Output (A × B / C × D)</h3>
+            <p>The calculator returns a combination of four gears:</p>
+            <ul>
+                <li><strong>A & B:</strong> Input gears (driver side)</li>
+                <li><strong>C & D:</strong> Output gears (driven side)</li>
+            </ul>
+
+            <div class="example">
+                Example output: 20 × 90 / 20 × 28
+                <br>This means: Use a 20-tooth gear × 90-tooth gear on input, and 20-tooth × 28-tooth on output
+            </div>
+
+            <h3>Accuracy Metrics</h3>
+            <div class="table-wrapper">
+                <table>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Meaning</th>
+                        <th>What's Good?</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Actual Lead</strong></td>
+                        <td>The exact pitch you'll achieve with selected gears</td>
+                        <td>Should match desired lead closely</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Error %</strong></td>
+                        <td>Deviation from desired lead as percentage</td>
+                        <td>Less than 1% is excellent; 0% is perfect</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Machine Constant</strong></td>
+                        <td>Internal calculation factor</td>
+                        <td>Reference value for your machine setup</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Formula Reference -->
+        <div class="guide-section">
+            <h2><span class="icon">🔢</span>Formula Reference</h2>
+
+            <p>The calculator uses the following mathematical relationship:</p>
+
+            <div class="formula">
+                Machine Lead Constant = Leadscrew Pitch × Dividing Head Ratio
+                <br><br>
+                Gear Ratio = Desired Lead / Machine Constant
+                <br><br>
+                Actual Lead = Gear Ratio × Machine Constant
+            </div>
+
+            <h3>Standard Gear Sizes</h3>
+            <p>The calculator can select from these standard gear tooth counts:</p>
+            <div class="example">
+                20, 28, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 90, 100
+            </div>
+        </div>
+
+        <!-- Common Examples -->
+        <div class="guide-section">
+            <h2><span class="icon">📚</span>Common Examples</h2>
+
+            <h3>Example 1: Standard Setup</h3>
+            <div class="example">
+                Input: Lead = 56.0 mm, Pitch = 4.5 mm, Ratio = 40
+                <br>Output: 20 × 90 / 20 × 28
+                <br>Error: 0.000% (Perfect match!)
+            </div>
+
+            <h3>Example 2: Tight Lead</h3>
+            <div class="example">
+                Input: Lead = 30.0 mm, Pitch = 4.5 mm, Ratio = 40
+                <br>Output: 50 × 100 / 20 × 100
+                <br>Error: 0.000% (Perfect match!)
+            </div>
+
+            <h3>Example 3: Large Lead</h3>
+            <div class="example">
+                Input: Lead = 100.0 mm, Pitch = 4.5 mm, Ratio = 40
+                <br>Output: 20 × 80 / 30 × 60
+                <br>Error: 0.016% (Excellent precision!)
+            </div>
+        </div>
+
+        <!-- Troubleshooting -->
+        <div class="guide-section">
+            <h2><span class="icon">🔧</span>Troubleshooting</h2>
+
+            <h3>High Error Percentage</h3>
+            <p>If the error percentage is higher than desired, try:</p>
+            <ul>
+                <li>Adjusting the desired lead slightly</li>
+                <li>Double-checking your machine's exact leadscrew pitch</li>
+                <li>Verifying the dividing head ratio specification</li>
+            </ul>
+
+            <h3>No Valid Gear Combination Found</h3>
+            <p>If no combination is found:</p>
+            <ul>
+                <li>The requested lead may be impossible with your machine specs</li>
+                <li>Try a nearby lead value (±0.5 mm)</li>
+                <li>Contact your machine manufacturer for alternative gear sets</li>
+            </ul>
+
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> Most calculations will find at least one solution within 0.1% error. Perfect matches (0% error) are common but not guaranteed for all lead values.
+            </div>
+        </div>
+
+        <!-- Best Practices -->
+        <div class="guide-section">
+            <h2><span class="icon">⭐</span>Best Practices</h2>
+
+            <ul>
+                <li><strong>Verify Machine Specs:</strong> Always confirm your machine's exact leadscrew pitch and dividing head ratio</li>
+                <li><strong>Check Gear Availability:</strong> Before cutting, ensure all recommended gears are available in your workshop</li>
+                <li><strong>Record Results:</strong> Save successful gear combinations for future reference</li>
+                <li><strong>Test Cut:</strong> Make a test cut and measure the actual lead before full production</li>
+                <li><strong>Gear Condition:</strong> Inspect gears for wear and damage before use</li>
+                <li><strong>Proper Spacing:</strong> Ensure gears are properly spaced and meshed correctly</li>
+            </ul>
+        </div>
+
+        <!-- Support -->
+        <div class="guide-section">
+            <h2><span class="icon">❓</span>Need More Help?</h2>
+
+            <p>Visit our resources:</p>
+            <ul>
+                <li><a href="about.html" style="color: #6366f1; text-decoration: none;">Learn More About Us</a></li>
+                <li><a href="../index.html" style="color: #6366f1; text-decoration: none;">Try the Calculator</a></li>
+                <li><a href="#" style="color: #6366f1; text-decoration: none;">Contact Support</a></li>
+            </ul>
+
+            <div class="tip-box">
+                <strong>💡 Pro Tip:</strong> Save this page as a PDF for quick reference in the workshop!
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Calculator</h3>
+                <a href="../index.html">Helical Gear Tool</a>
+                <a href="guide.html">Quick Guide</a>
+                <a href="#">Formula Reference</a>
+            </div>
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <a href="about.html">About Us</a>
+                <a href="#">Documentation</a>
+                <a href="#">FAQ</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="#">Contact Us</a>
+                <a href="#">Report Issue</a>
+                <a href="#">Feedback</a>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">License</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Helical Gear Calculator. All rights reserved. | Built with ❤️ for engineers</p>
+        </div>
+    </footer>
+
+    <script>
+        // Dark mode toggle
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+            updateThemeToggle();
+        }
+
+        function updateThemeToggle() {
+            const toggle = document.getElementById('themeToggle');
+            if (document.body.classList.contains('dark-mode')) {
+                toggle.textContent = '☀️';
+            } else {
+                toggle.textContent = '🌙';
+            }
+        }
+
+        // Load saved theme preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            updateThemeToggle();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Industrial Bolt Torque Calculator</title>
+
+    <link rel="stylesheet" href="../Styles/Gear_Train_Calculator.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script src="../Scripts/firebase-init.js"></script>
+    <script src="../Scripts/firebase-credits.js"></script>
+
+    <style>
+        /* Supplementary adjustments to styled components to support standard HTML elements */
+        select {
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1em;
+            background-color: var(--card-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: border-color 0.3s ease;
+            width: 100%;
+            color: var(--text-color);
+        }
+        select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+        .help-text {
+            font-size: 0.82em;
+            color: var(--text-muted);
+            margin-top: 5px;
+            font-style: italic;
+        }
+        .formula-card {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(79, 70, 229, 0.08);
+            border-radius: 8px;
+            border-left: 4px solid var(--formula-brand);
+            font-size: 0.9em;
+            color: var(--text-color);
+        }
+        .formula-title {
+            font-weight: 700;
+            color: var(--formula-brand);
+            margin-bottom: 5px;
+        }
+        .hidden {
+            display: none !important;
+        }
+
+        /* ==========================================================================
+        1. Design Token Variables (Theme Configurations)
+        ========================================================================== */
+        :root {
+            --nav-bg: #ffffff;
+            --nav-text: #1e293b;
+            --nav-text-muted: #64748b;
+            --nav-accent: #2563eb;       /* Primary Interactive Blue */
+            --nav-border: #e2e8f0;
+            --nav-height: 70px;
+            
+            --nav-font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --nav-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ==========================================================================
+        2. Core Navbar Layout
+        ========================================================================== */
+        .navbar {
+            height: var(--nav-height);
+            background-color: var(--nav-bg);
+            border-bottom: 1px solid var(--nav-border);
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            font-family: var(--nav-font);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Centered content wrapper matching standard page grid alignments */
+        .navbar-content {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* ==========================================================================
+        3. Individual Components
+        ========================================================================== */
+
+        /* Brand / Logo Styling */
+        .navbar-brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--nav-text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+            transition: var(--nav-transition);
+        }
+
+        .navbar-brand:hover {
+            opacity: 0.9;
+        }
+
+        /* Unordered List Links Wrapper */
+        .navbar-links {
+            display: flex;
+            list-style: none;
+            align-items: center;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Interactive Navigation Anchor Links */
+        .navbar-links a {
+            text-decoration: none;
+            color: var(--nav-text-muted);
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.25rem 0;
+            position: relative;
+            transition: var(--nav-transition);
+        }
+
+        /* Hover & Active States */
+        .navbar-links a:hover,
+        .navbar-links a.active {
+            color: var(--nav-accent);
+        }
+
+        /* Bottom underline slide-in transition on link hover */
+        .navbar-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--nav-accent);
+            transform: scaleX(0);
+            transform-origin: right center;
+            transition: transform 0.25s ease;
+        }
+
+        .navbar-links a:hover::after,
+        .navbar-links a.active::after {
+            transform: scaleX(1);
+            transform-origin: left center;
+        }
+
+        /* Action Utility Button inside navbar (e.g., CTA, Login) */
+        .navbar-btn {
+            background-color: var(--nav-accent);
+            color: #ffffff;
+            border: none;
+            padding: 0.5rem 1.25rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--nav-transition);
+            white-space: nowrap;
+        }
+
+        .navbar-btn:hover {
+            filter: brightness(0.9);
+            transform: translateY(-1px);
+        }
+
+        .navbar-btn:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="../index.html" class="navbar-brand">⚙️ Gear Calc</a>
+            
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle Navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <ul class="navbar-links" id="navbarLinks">
+                <li><a href="../index.html" class="active">Calculator</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="login.html" id="navbar-login-link">Login</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container" style="margin-top: 20px;">
+        <div class="auth-bar">
+            <span id="user-display">Loading Specialist Profile...</span>
+            <span class="credit-pill">⚡ Account Balance: <strong data-credit-balance>0</strong> Credits</span>
+            <button id="auth-action-btn" onclick="handleAuthAction()">Sign In</button>
+        </div>
+
+        <h1>Industrial Bolt Torque Calculator</h1>
+
+        <div id="credit-error-message" class="error hidden" style="margin-bottom: 20px;"></div>
+
+        <div class="calculator-wrapper">
+            <div class="input-section">
+                <h2>Input Parameters</h2>
+                
+                <div class="form-group">
+                    <label for="preset-select">Standard Size Preset (Optional)</label>
+                    <select id="preset-select" onchange="applyPreset()">
+                        <option value="">-- Choose a preset to auto-fill configurations --</option>
+                        <optgroup label="Metric (Class 8.8 Structural Steel)">
+                            <option value="metric,6,9.1">M6 (Dia: 6mm, Preload: 9.1 kN)</option>
+                            <option value="metric,8,16.6">M8 (Dia: 8mm, Preload: 16.6 kN)</option>
+                            <option value="metric,10,26.3">M10 (Dia: 10mm, Preload: 26.3 kN)</option>
+                            <option value="metric,12,38.2">M12 (Dia: 12mm, Preload: 38.2 kN)</option>
+                            <option value="metric,16,71.2">M16 (Dia: 16mm, Preload: 71.2 kN)</option>
+                        </optgroup>
+                        <optgroup label="Imperial (SAE Grade 5 Fastener)">
+                            <option value="imperial,0.25,1300">1/4"-20 (Dia: 0.25in, Preload: 1,300 lbs)</option>
+                            <option value="imperial,0.375,3150">3/8"-16 (Dia: 0.375in, Preload: 3,150 lbs)</option>
+                            <option value="imperial,0.5,5750">1/2"-13 (Dia: 0.50in, Preload: 5,750 lbs)</option>
+                            <option value="imperial,0.625,9200">5/8"-11 (Dia: 0.625in, Preload: 9,200 lbs)</option>
+                            <option value="imperial,0.75,13600">3/4"-10 (Dia: 0.75in, Preload: 13,600 lbs)</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="unit-system">Target System of Units</label>
+                    <select id="unit-system" onchange="updateUnitLabels()">
+                        <option value="metric">Metric System (mm / kN / N·m)</option>
+                        <option value="imperial">Imperial System (Inches / lbs / ft-lbs)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label id="diameter-label" for="bolt-diameter">Nominal Bolt Diameter (D)</label>
+                    <input type="number" id="bolt-diameter" step="any" placeholder="e.g., 12 or 0.5">
+                    <div class="help-text" id="diameter-help">Enter diameter in millimeters (mm).</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="bolt-condition">Thread Friction / Coating Condition</label>
+                    <select id="bolt-condition" onchange="updateKFactor()">
+                        <option value="0.20">Standard Dry Steel / Unlubricated (K = 0.20)</option>
+                        <option value="0.15">Lubricated Oil / Anti-Seize Paste (K = 0.15)</option>
+                        <option value="0.22">Cadmium or Zinc-Plated Finishing (K = 0.22)</option>
+                        <option value="0.25">Hot-Dip Galvanized Threads (K = 0.25)</option>
+                        <option value="custom">Provide Custom Nut Factor (K Coefficient)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="k-factor">Torque Coefficient / Nut Factor (K)</label>
+                    <input type="number" id="k-factor" step="0.01" value="0.20" placeholder="e.g., 0.20">
+                    <div class="help-text">Calculated standard dimensional friction context factor.</div>
+                </div>
+
+                <div class="form-group">
+                    <label id="preload-label" for="preload-force">Design Preload Clamp Force (F)</label>
+                    <input type="number" id="preload-force" step="any" placeholder="e.g., 38.2 or 5750">
+                    <div class="help-text" id="preload-help">Enter absolute design clamping tension in kilonewtons (kN).</div>
+                </div>
+
+                <button class="btn-calculate" onclick="processCalculationRequest()">Calculate Torque (Costs 1 Credit)</button>
+
+                <div class="formula-card">
+                    <div class="formula-title">Short-Form Clamp Mechanical Model</div>
+                    <div>Applied calculation rule: <strong>T = K × D × F</strong></div>
+                    <div style="margin-top: 5px; font-size: 0.85em; line-height: 1.4;">
+                        • <strong>T</strong>: Target Clamp Tightening Torque Requirement<br>
+                        • <strong>K</strong>: Dimensionless Structural Nut Coefficient<br>
+                        • <strong>D</strong>: Nominal Metric/Imperial Shank Clearance Outer Diameter<br>
+                        • <strong>F</strong>: Applied Induced Target Tensile Preload Force
+                    </div>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <h2>Calculation Results</h2>
+                <div class="results-content" id="results-content">
+                    <div class="placeholder">
+                        Specify structural parameters and click the calculator button to resolve fastener metrics.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        // Initialize mobile responsive hamburger event listeners once parsing finishes
+        document.addEventListener("DOMContentLoaded", () => {
+            const menuToggle = document.getElementById('menuToggle');
+            const navbarLinks = document.getElementById('navbarLinks');
+
+            if (menuToggle && navbarLinks) {
+                menuToggle.addEventListener('click', () => {
+                    menuToggle.classList.toggle('open');
+                    navbarLinks.classList.toggle('open');
+                });
+            }
+        });
+
+        // Establish structural hooks checking against the localized configuration script instance
+        if (window.firebase && firebase.apps.length) {
+            firebase.auth().onAuthStateChanged(async (user) => {
+                const userDisplay = document.getElementById('user-display');
+                const authBtn = document.getElementById('auth-action-btn');
+                const navLoginLink = document.getElementById('navbar-login-link');
+                const errDiv = document.getElementById('credit-error-message');
+                
+                errDiv.classList.add('hidden'); // Clear error states on authorization adjustments
+
+                if (user) {
+                    currentUser = user;
+                    userDisplay.textContent = `Specialist: ${user.email || user.uid.substring(0,8)}`;
+                    authBtn.textContent = 'Sign Out';
+                    authBtn.style.backgroundColor = '#dc3545';
+                    
+                    // Sync the navigation bar link representation 
+                    navLoginLink.textContent = 'Sign Out';
+                    navLoginLink.href = '#';
+                    navLoginLink.onclick = function(e) {
+                        e.preventDefault();
+                        handleAuthAction();
+                    };
+                    
+                    try {
+                        // Dynamically resolve balance checking against local storage and databases
+                        await window.creditManager.ensureUserCredits(user);
+                    } catch (err) {
+                        console.error("Failed handling credit checking profiles", err);
+                    }
+                } else {
+                    currentUser = null;
+                    userDisplay.textContent = "Not Signed In";
+                    authBtn.textContent = 'Sign In';
+                    authBtn.style.backgroundColor = '#28a745';
+                    
+                    // Revert navigation login link back to typical states
+                    navLoginLink.textContent = 'Login';
+                    navLoginLink.href = 'login.html';
+                    navLoginLink.onclick = null;
+                    
+                    window.creditManager.updateCreditsDisplay(0);
+                    
+                    // Automatically redirect to login page if user is completely unauthorized
+                    window.location.href = "login.html";
+                }
+            });
+        }
+
+        // Handles button clicks for signing in or signing out
+        function handleAuthAction() {
+            if (currentUser) {
+                firebase.auth().signOut().then(() => {
+                    window.location.href = "login.html";
+                }).catch((error) => {
+                    console.error("Sign out error: ", error);
+                    window.location.href = "login.html"; // Safe fallback redirect
+                });
+            } else {
+                window.location.href = "login.html";
+            }
+        }
+
+        // Functional mechanism handles local unit label shifts securely
+        function updateUnitLabels() {
+            const system = document.getElementById('unit-system').value;
+            const dLabel = document.getElementById('diameter-label');
+            const dHelp = document.getElementById('diameter-help');
+            const pLabel = document.getElementById('preload-label');
+            const pHelp = document.getElementById('preload-help');
+
+            if (system === 'metric') {
+                dLabel.innerHTML = 'Nominal Bolt Diameter (D)';
+                dHelp.innerHTML = 'Enter diameter in millimeters (mm).';
+                pLabel.innerHTML = 'Design Preload Clamp Force (F)';
+                pHelp.innerHTML = 'Enter absolute design clamping tension in kilonewtons (kN).';
+            } else {
+                dLabel.innerHTML = 'Nominal Bolt Diameter (D)';
+                dHelp.innerHTML = 'Enter diameter in inches (in).';
+                pLabel.innerHTML = 'Design Preload Clamp Force (F)';
+                pHelp.innerHTML = 'Enter absolute design clamping tension in pounds (lbs).';
+            }
+        }
+
+        // Monitors condition selection and updates friction input elements
+        function updateKFactor() {
+            const condition = document.getElementById('bolt-condition').value;
+            const kInput = document.getElementById('k-factor');
+            if (condition !== 'custom') {
+                kInput.value = condition;
+                kInput.disabled = true;
+                kInput.style.backgroundColor = 'var(--bg-color)';
+            } else {
+                kInput.disabled = false;
+                kInput.style.backgroundColor = 'var(--card-bg)';
+                kInput.focus();
+            }
+        }
+
+        // Decodes drop presets and applies targets to interface inputs smoothly
+        function applyPreset() {
+            const selector = document.getElementById('preset-select').value;
+            if (!selector) return;
+
+            const [sys, dia, pre] = selector.split(',');
+            document.getElementById('unit-system').value = sys;
+            updateUnitLabels();
+
+            document.getElementById('bolt-diameter').value = dia;
+            document.getElementById('preload-force').value = pre;
+        }
+
+        // Direct coordination layer checking balance and validation targets before rendering calculation reports
+        async function processCalculationRequest() {
+            const resView = document.getElementById('results-content');
+            const errBox = document.getElementById('credit-error-message');
+            errBox.classList.add('hidden');
+
+            // Authentication verification block
+            if (!currentUser) {
+                resView.innerHTML = `
+                    <div class="error">
+                        <strong>Authorization Required:</strong> You must sign in using the professional dashboard portal above before processing structural transactions.
+                    </div>`;
+                window.location.href = "login.html";
+                return;
+            }
+
+            // Client data asset metrics capture parsing
+            const system = document.getElementById('unit-system').value;
+            const diameter = parseFloat(document.getElementById('bolt-diameter').value);
+            const kFactor = parseFloat(document.getElementById('k-factor').value);
+            const preload = parseFloat(document.getElementById('preload-force').value);
+
+            // Interface engineering component sanity checks
+            if (isNaN(diameter) || diameter <= 0) {
+                resView.innerHTML = `<div class="error"><strong>Validation Abort:</strong> Please input an explicit positive nominal shank parameter for Diameter (D).</div>`;
+                return;
+            }
+            if (isNaN(kFactor) || kFactor <= 0) {
+                resView.innerHTML = `<div class="error"><strong>Validation Abort:</strong> Specify an explicit non-zero target context value for Nut Coefficient (K).</div>`;
+                return;
+            }
+            if (isNaN(preload) || preload <= 0) {
+                resView.innerHTML = `<div class="error"><strong>Validation Abort:</strong> Define a valid operating limit context boundary for Clamping Force (F).</div>`;
+                return;
+            }
+
+            // Execution phase: Attempt to deduct credit through creditManager gateway API
+            try {
+                resView.innerHTML = `<div class="placeholder">Deducting balance verification ledger token...</div>`;
+                await window.creditManager.deductCredit(currentUser);
+            } catch (error) {
+                window.creditManager.showCreditError(error.message);
+                resView.innerHTML = `
+                    <div class="error">
+                        <strong>Transaction Terminated:</strong> ${error.message || 'Operation requires additional credits.'}
+                    </div>`;
+                return;
+            }
+
+            // Compute metrics based on target unit configuration rules
+            let primaryTorque, primaryUnit, alternativeTorque, alternativeUnit;
+
+            if (system === 'metric') {
+                primaryTorque = kFactor * diameter * preload;
+                primaryUnit = 'N·m';
+                alternativeTorque = primaryTorque * 0.737562;
+                alternativeUnit = 'ft-lbs';
+            } else {
+                const torqueInLbs = kFactor * diameter * preload;
+                primaryTorque = torqueInLbs / 12; 
+                primaryUnit = 'ft-lbs';
+                alternativeTorque = torqueInLbs;
+                alternativeUnit = 'in-lbs';
+            }
+
+            // Output data formatting matching structural elements from your CSS template
+            resView.innerHTML = `
+                <div class="success">
+                    <strong>Transaction Cleared:</strong> Fastener mechanical metrics evaluated successfully. One processing credit has been deducted.
+                </div>
+                
+                <div class="result-item">
+                    <div class="result-label">Recommended Tightening Torque (Primary Target)</div>
+                    <div>
+                        <span class="result-value">${primaryTorque.toFixed(2)}</span>
+                        <span class="result-unit">${primaryUnit}</span>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Alternative Evaluation Scale Unit</div>
+                    <div>
+                        <span class="result-value">${alternativeTorque.toFixed(2)}</span>
+                        <span class="result-unit">${alternativeUnit}</span>
+                    </div>
+                </div>
+
+                <div class="result-item" style="border-left-color: var(--formula-brand);">
+                    <div class="result-label">Calculated Absolute Clamp Load Profile</div>
+                    <div>
+                        <span class="result-value">${preload.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})}</span>
+                        <span class="result-unit">${system === 'metric' ? 'kN' : 'lbs'}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initialize state configuration options on runtime bootstrap
+        window.onload = function() {
+            updateKFactor();
+        };
+    </script>
+</body>
+</html>

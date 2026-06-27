@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gear Train Calculator</title>
+    <link rel="stylesheet" href="../Styles/Gear_Train_Calculator.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="../index.html" class="navbar-brand">⚙️ Gear Calc</a>
+            
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle Navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <ul class="navbar-links" id="navbarLinks">
+                <li><a href="../index.html" class="active">Calculator</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="login.html" id="navbar-login-link">Login</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="auth-bar" style="display: none;">
+            <span id="userEmail">Checking login...</span>
+            <span class="credit-pill">Credits: <span data-credit-balance>--</span></span>
+            <button type="button" id="logoutBtn">Logout</button>
+        </div>
+        <h1>Helical Gear Train Calculator</h1>
+        <div class="calculator-wrapper">
+            <div class="input-section">
+                <h2>Input Parameters</h2>
+                <form id="gearForm">
+                    <div class="form-group">
+                        <label for="inputSpeed">Input Speed (RPM):</label>
+                        <input type="number" id="inputSpeed" placeholder="e.g., 1000" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pinion1Teeth">Pinion 1 Teeth:</label>
+                        <input type="number" id="pinion1Teeth" placeholder="e.g., 20" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gear1Teeth">Gear 1 Teeth:</label>
+                        <input type="number" id="gear1Teeth" placeholder="e.g., 80" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pinion2Teeth">Pinion 2 Teeth (optional):</label>
+                        <input type="number" id="pinion2Teeth" placeholder="e.g., 25">
+                    </div>
+                    <div class="form-group">
+                        <label for="gear2Teeth">Gear 2 Teeth (optional):</label>
+                        <input type="number" id="gear2Teeth" placeholder="e.g., 75">
+                    </div>
+                    <div class="form-group">
+                        <label for="pressureAngle">Pressure Angle (degrees):</label>
+                        <input type="number" id="pressureAngle" placeholder="e.g., 20" value="20" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="helixAngle">Helix Angle (degrees):</label>
+                        <input type="number" id="helixAngle" placeholder="e.g., 15" value="15" required>
+                    </div>
+                    <button type="submit" class="btn-calculate">Calculate</button>
+                </form>
+            </div>
+            <div class="results-section">
+                <h2>Results</h2>
+                <div id="results" class="results-content">
+                    <p class="placeholder">Enter values and click Calculate to see results</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    <script src="../Scripts/firebase-init.js"></script>
+    <script src="../Scripts/firebase-credits.js"></script>
+    <script>
+        const auth = firebase.auth();
+
+        auth.onAuthStateChanged(async (user) => {
+            const authBar = document.querySelector('.auth-bar');
+            if (!user) {
+                authBar.style.display = 'none';
+                window.location.href = 'login.html';
+                return;
+            }
+
+            document.getElementById('userEmail').textContent = 'Logged in as: ' + user.email;
+            authBar.style.display = 'flex';
+            try {
+                await window.creditManager.ensureUserCredits(user);
+            } catch (error) {
+                console.error('Credit load error:', error);
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            auth.signOut().then(() => {
+                window.location.href = 'login.html';
+            });
+        });
+    </script>
+    <script src="../Scripts/Gear_Train_Calculator.js"></script>
+</body>
+</html>
