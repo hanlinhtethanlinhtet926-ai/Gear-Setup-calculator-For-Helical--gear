@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XhaBot Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="../../HTML/dashboard.html" class="navbar-brand">🤖 XhaBot Assistant</a>
+            <ul class="navbar-links">
+                <li><a href="../../HTML/dashboard.html">Dashboard</a></li>
+                <li><a href="../../HTML/Guide.html">Guide</a></li>
+                <li><a href="../../HTML/about.html">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="chat-container">
+        <header class="chat-header">
+            <h1>XhaBot Assistant 🤖</h1>
+            <p>Your AI partner for technical problem solving.</p>
+        </header>
+
+        <div class="chat-box" id="chat-box">
+            <!-- Chat messages will be appended here -->
+        </div>
+
+        <footer class="chat-footer">
+            <form id="chat-form" class="chat-form">
+                <input type="text" id="user-input" placeholder="Ask me anything about engineering or code..." autocomplete="off">
+                <button type="submit">Send</button>
+            </form>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
