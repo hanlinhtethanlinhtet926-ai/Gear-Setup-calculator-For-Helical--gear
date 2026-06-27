@@ -8,6 +8,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let waiting = false;
     let isTyping = false;
 
+    // Use a relative path by default, which works if frontend and backend are on the same host.
+    const API_BASE_URL = ""; // e.g., "https://your-production-backend.com"
+
     chatForm.addEventListener("submit", sendMessage);
 
     async function sendMessage(e) {
@@ -30,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const loadingMessage = appendMessage("Thinking...", "bot loading");
 
         try {
-            const response = await fetch("/chat", {
+            const response = await fetch(`${API_BASE_URL}/chat`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
