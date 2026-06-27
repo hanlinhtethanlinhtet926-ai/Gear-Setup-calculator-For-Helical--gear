@@ -571,6 +571,43 @@
                 Invalid input values. Please check the inputs.
             </div>
         </div>
+
+        <!-- Buy Credits Section -->
+        <div id="credits-section" class="mt-12 pt-8 border-t border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4" data-lang-key="buy_credits_title">
+                Buy More Credits
+            </h2>
+            <p class="text-gray-600 mb-6" data-lang-key="buy_credits_subtitle">
+                Select a package below to add credits to your account via PayPal.
+            </p>
+            <div id="purchaseMessage" class="purchase-message mb-4"></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Credit Package 1 -->
+                <div class="credit-package border p-4 rounded-lg shadow-sm text-center">
+                    <h3 class="text-xl font-semibold text-indigo-700">100 Credits</h3>
+                    <p class="text-2xl font-bold my-2">$5.00</p>
+                    <div id="paypal-credits-100"></div>
+                </div>
+                <!-- Credit Package 2 -->
+                <div class="credit-package border p-4 rounded-lg shadow-sm text-center">
+                    <h3 class="text-xl font-semibold text-indigo-700">200 Credits</h3>
+                    <p class="text-2xl font-bold my-2">$10.00</p>
+                    <div id="paypal-credits-200"></div>
+                </div>
+                <!-- Credit Package 3 -->
+                <div class="credit-package border p-4 rounded-lg shadow-sm text-center">
+                    <h3 class="text-xl font-semibold text-indigo-700">500 Credits</h3>
+                    <p class="text-2xl font-bold my-2">$25.00</p>
+                    <div id="paypal-credits-500"></div>
+                </div>
+                <!-- Credit Package 4 -->
+                <div class="credit-package border p-4 rounded-lg shadow-sm text-center">
+                    <h3 class="text-xl font-semibold text-indigo-700">1000 Credits</h3>
+                    <p class="text-2xl font-bold my-2">$50.00</p>
+                    <div id="paypal-credits-1000"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -582,6 +619,20 @@
         const STANDARD_GEARS = [
            20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 84, 86, 90, 100, 120
         ];
+
+        // --- PayPal and Credits Configuration ---
+        let paypalButtonsRendered = false;
+        const PAYPAL_CLIENT_ID = 'sb'; // Replace with your actual client ID
+        const CREDIT_PACKAGES = [
+            { credits: 100, price: '5.00', containerId: 'paypal-credits-100' },
+            { credits: 200, price: '10.00', containerId: 'paypal-credits-200' },
+            { credits: 500, price: '25.00', containerId: 'paypal-credits-500' },
+            { credits: 1000, price: '50.00', containerId: 'paypal-credits-1000' }
+        ];
+
+        // Add credit balance display to auth header
+        const authHeader = document.getElementById('authHeader').querySelector('.flex.items-center');
+        authHeader.innerHTML += `<span class="text-sm font-medium text-gray-700">| Credits: <span data-credit-balance>0</span></span>`;
 
         // --- Translation Data ---
         const TRANSLATIONS = {
@@ -637,6 +688,8 @@
                 previous_setup: "Previous Setup",
                 no_more_setups: "No More Setups (End)",
                 error_message: "Invalid input values. Please check the inputs.",
+                buy_credits_title: "Buy More Credits",
+                buy_credits_subtitle: "Select a package below to add credits to your account via PayPal.",
                 example: "Ex:",
             },
             'th': {
@@ -664,6 +717,8 @@
                 previous_setup: "ชุดก่อนหน้า",
                 no_more_setups: "ไม่มีชุดเพิ่มเติม (สิ้นสุด)",
                 error_message: "ค่าอินพุตไม่ถูกต้อง กรุณาตรวจสอบ.",
+                buy_credits_title: "ซื้อเครดิตเพิ่ม",
+                buy_credits_subtitle: "เลือกแพ็คเกจด้านล่างเพื่อเพิ่มเครดิตในบัญชีของคุณผ่าน PayPal",
                 example: "ตัวอย่าง:",
             },
             'ru': {
@@ -691,6 +746,8 @@
                 previous_setup: "Предыдущая настройка",
                 no_more_setups: "Больше настроек нет (Конец)",
                 error_message: "Неверные входные значения. Пожалуйста, проверьте ввод.",
+                buy_credits_title: "Купить еще кредитов",
+                buy_credits_subtitle: "Выберите пакет ниже, чтобы добавить кредиты на свой счет через PayPal.",
                 example: "Пример:",
             },
             'mn': {
@@ -718,6 +775,8 @@
                 previous_setup: "Өмнөх тохиргоо",
                 no_more_setups: "Цаашид тохиргоо байхгүй (Төгсгөл)",
                 error_message: "Оролтын утгууд буруу байна. Оролтуудыг шалгана уу.",
+                buy_credits_title: "Нэмэлт кредит худалдаж авах",
+                buy_credits_subtitle: "Доорх багцаас сонгож PayPal-р дамжуулан дансандаа кредит нэмнэ үү.",
                 example: "Жишээ:",
             },
             'es': {
@@ -745,6 +804,8 @@
                 previous_setup: "Configuración Anterior",
                 no_more_setups: "No hay más configuraciones (Fin)",
                 error_message: "Valores de entrada no válidos. Por favor, compruebe las entradas.",
+                buy_credits_title: "Comprar más créditos",
+                buy_credits_subtitle: "Seleccione un paquete a continuación para agregar créditos a su cuenta a través de PayPal.",
                 example: "Ejemplo:",
             },
             'fr': {
@@ -772,6 +833,8 @@
                 previous_setup: "Configuration Précédente",
                 no_more_setups: "Plus de configurations (Fin)",
                 error_message: "Valeurs d'entrée non valides. Veuillez vérifier les entrées.",
+                buy_credits_title: "Acheter plus de crédits",
+                buy_credits_subtitle: "Sélectionnez un forfait ci-dessous pour ajouter des crédits à votre compte via PayPal.",
                 example: "Exemple:",
             },
             'zh': {
@@ -799,6 +862,8 @@
                 previous_setup: "上一设置",
                 no_more_setups: "没有更多设置 (结束)",
                 error_message: "输入值无效。请检查输入。",
+                buy_credits_title: "购买更多积分",
+                buy_credits_subtitle: "选择下面的套餐，通过PayPal为您的账户充值。",
                 example: "例如:",
             },
             'hi': {
@@ -826,6 +891,8 @@
                 previous_setup: "पिछला सेटअप",
                 no_more_setups: "और सेटअप नहीं (समाप्त)",
                 error_message: "अमान्य इनपुट मान। कृपया इनपुट जांचें।",
+                buy_credits_title: "और क्रेडिट खरीदें",
+                buy_credits_subtitle: "PayPal के माध्यम से अपने खाते में क्रेडिट जोड़ने के लिए नीचे एक पैकेज चुनें।",
                 example: "उदाहरण:",
             },
             'nl': {
@@ -853,6 +920,8 @@
                 previous_setup: "Vorige Opstelling",
                 no_more_setups: "Geen Opstellingen Meer (Einde)",
                 error_message: "Ongeldige invoerwaarden. Controleer de invoer.",
+                buy_credits_title: "Koop meer credits",
+                buy_credits_subtitle: "Selecteer hieronder een pakket om credits aan uw account toe te voegen via PayPal.",
                 example: "Bv:",
             },
             'pt': {
@@ -880,6 +949,8 @@
                 previous_setup: "Configuração Anterior",
                 no_more_setups: "Sem Mais Configurações (Fim)",
                 error_message: "Valores de entrada inválidos. Por favor, verifique a entrada.",
+                buy_credits_title: "Comprar mais créditos",
+                buy_credits_subtitle: "Selecione um pacote abaixo para adicionar créditos à sua conta via PayPal.",
                 example: "Ex:",
             },
             'sr': {
@@ -907,6 +978,8 @@
                 previous_setup: "Претходно подешавање",
                 no_more_setups: "Нема више подешавања (Крај)",
                 error_message: "Неважеће улазне вредности. Молимо проверите улаз.",
+                buy_credits_title: "Купите још кредита",
+                buy_credits_subtitle: "Изаберите пакет испод да бисте додали кредите на свој налог преко PayPal-а.",
                 example: "Нпр:",
             },
             'uk': {
@@ -934,6 +1007,8 @@
                 previous_setup: "Попереднє налаштування",
                 no_more_setups: "Більше налаштувань немає (Кінець)",
                 error_message: "Недійсні вхідні значення. Будь ласка, перевірте вхідні дані.",
+                buy_credits_title: "Купити більше кредитів",
+                buy_credits_subtitle: "Виберіть пакет нижче, щоб додати кредити на свій рахунок через PayPal.",
                 example: "Напр:",
             },
             'ar': {
@@ -961,6 +1036,8 @@
                 previous_setup: "الإعداد السابق",
                 no_more_setups: "لا مزيد من الإعدادات (النهاية)",
                 error_message: "قيم الإدخال غير صالحة. يرجى التحقق من المدخلات.",
+                buy_credits_title: "شراء المزيد من الأرصدة",
+                buy_credits_subtitle: "حدد حزمة أدناه لإضافة أرصدة إلى حسابك عبر PayPal.",
                 example: "مثال:",
             },
             'ja': {
@@ -988,6 +1065,8 @@
                 previous_setup: "前の設定",
                 no_more_setups: "これ以上の設定はありません (終了)",
                 error_message: "無効な入力値です。入力を確認してください。",
+                buy_credits_title: "クレジットを追加購入",
+                buy_credits_subtitle: "以下でパッケージを選択して、PayPal経由でアカウントにクレジットを追加します。",
                 example: "例:",
             },
             'ko': {
@@ -1015,6 +1094,8 @@
                 previous_setup: "이전 설정",
                 no_more_setups: "더 이상 설정이 없습니다 (종료)",
                 error_message: "잘못된 입력 값입니다. 입력을 확인하십시오.",
+                buy_credits_title: "크레딧 추가 구매",
+                buy_credits_subtitle: "아래 패키지를 선택하여 PayPal을 통해 계정에 크레딧을 추가하세요.",
                 example: "예:",
             },
             'de': {
@@ -1042,6 +1123,8 @@
                 previous_setup: "Vorherige Einstellung",
                 no_more_setups: "Keine weiteren Einstellungen (Ende)",
                 error_message: "Ungültige Eingabewerte. Bitte überprüfen Sie die Eingaben.",
+                buy_credits_title: "Mehr Credits kaufen",
+                buy_credits_subtitle: "Wählen Sie unten ein Paket aus, um Ihrem Konto über PayPal Credits hinzuzufügen.",
                 example: "Bsp.:",
             },
             'pl': {
@@ -1069,6 +1152,8 @@
                 previous_setup: "Poprzednie Ustawienie",
                 no_more_setups: "Brak dalszych ustawień (Koniec)",
                 error_message: "Nieprawidłowe wartości wejściowe. Proszę sprawdzić dane wejściowe.",
+                buy_credits_title: "Kup więcej kredytów",
+                buy_credits_subtitle: "Wybierz pakiet poniżej, aby dodać kredyty do swojego konta przez PayPal.",
                 example: "Np:",
             },
             'no': {
@@ -1096,6 +1181,8 @@
                 previous_setup: "Forrige Oppsett",
                 no_more_setups: "Ingen flere oppsett (Slutt)",
                 error_message: "Ugyldige inndataverdier. Vennligst sjekk inndataene.",
+                buy_credits_title: "Kjøp flere kreditter",
+                buy_credits_subtitle: "Velg en pakke nedenfor for å legge til kreditter på kontoen din via PayPal.",
                 example: "Eks:",
             }
         };
@@ -1210,13 +1297,140 @@
             }
         }
 
-        function calculate() {
+        // --- PayPal Functions ---
+
+        function loadPayPalSdk() {
+            if (window.paypal) {
+                return Promise.resolve();
+            }
+
+            return new Promise(function(resolve, reject) {
+                const existingScript = document.getElementById('paypalSdk');
+
+                if (existingScript) {
+                    existingScript.addEventListener('load', resolve, { once: true });
+                    existingScript.addEventListener('error', reject, { once: true });
+                    return;
+                }
+
+                const script = document.createElement('script');
+                script.id = 'paypalSdk';
+                script.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(PAYPAL_CLIENT_ID)}&currency=USD&intent=capture`;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.body.appendChild(script);
+            });
+        }
+
+        async function setupPayPalCreditButtons(user) {
+            if (paypalButtonsRendered) {
+                return;
+            }
+
+            if (!window.creditManager || !window.creditManager.addCredits) {
+                showPurchaseMessage('Credit manager is not ready. Please reload the page.', 'error');
+                return;
+            }
+
+            try {
+                await loadPayPalSdk();
+            } catch (error) {
+                showPurchaseMessage('PayPal could not load. Please check your connection and try again.', 'error');
+                return;
+            }
+
+            CREDIT_PACKAGES.forEach(function(packageInfo) {
+                const container = document.getElementById(packageInfo.containerId);
+
+                if (!container || container.dataset.rendered === 'true') {
+                    return;
+                }
+
+                window.paypal.Buttons({
+                    style: {
+                        layout: 'vertical',
+                        color: 'gold',
+                        shape: 'rect',
+                        label: 'paypal',
+                        height: 38
+                    },
+                    createOrder: function(data, actions) {
+                        return actions.order.create({
+                            purchase_units: [{
+                                description: `${packageInfo.credits} calculator credits`,
+                                amount: {
+                                    currency_code: 'USD',
+                                    value: packageInfo.price
+                                }
+                            }]
+                        });
+                    },
+                    onApprove: async function(data, actions) {
+                        try {
+                            const details = await actions.order.capture();
+                            await window.creditManager.addCredits(user, packageInfo.credits, {
+                                provider: 'paypal',
+                                orderId: data.orderID,
+                                payerEmail: details.payer && details.payer.email_address ? details.payer.email_address : '',
+                                credits: packageInfo.credits,
+                                amount: packageInfo.price,
+                                currency: 'USD',
+                                capturedAt: new Date().toISOString()
+                            });
+                            showPurchaseMessage(`${packageInfo.credits} credits added successfully.`, 'success');
+                        } catch (error) {
+                            console.error('Payment credit error:', error);
+                            showPurchaseMessage('Payment completed, but credits could not be added. Please contact support.', 'error');
+                        }
+                    },
+                    onCancel: function() {
+                        showPurchaseMessage('Payment cancelled.', 'info');
+                    },
+                    onError: function(error) {
+                        console.error('PayPal error:', error);
+                        showPurchaseMessage('PayPal payment failed. Please try again.', 'error');
+                    }
+                }).render(`#${packageInfo.containerId}`);
+
+                container.dataset.rendered = 'true';
+            });
+
+            paypalButtonsRendered = true;
+        }
+
+        function showPurchaseMessage(message, type) {
+            const messageEl = document.getElementById('purchaseMessage');
+            messageEl.textContent = message;
+            messageEl.className = `purchase-message ${type} mb-4 p-3 rounded-lg`;
+        }
+
+        async function calculate() {
             const L = parseFloat(document.getElementById('lead').value);
             const P_L = parseFloat(document.getElementById('pitch').value);
             const R_DH = parseFloat(document.getElementById('ratio').value);
             
             const resultDiv = document.getElementById('result');
             const errorMessageDiv = document.getElementById('error-message');
+
+            // --- Credit Deduction ---
+            if (window.creditManager && window.firebase) {
+                const user = firebase.auth().currentUser;
+                if (user) {
+                    try {
+                        await window.creditManager.deductCredit(user);
+                    } catch (error) {
+                        errorMessageDiv.textContent = error.message || 'You have no credits remaining.';
+                        errorMessageDiv.classList.remove('hidden');
+                        resultDiv.classList.add('hidden');
+                        return;
+                    }
+                } else {
+                    errorMessageDiv.textContent = 'Please log in to perform calculations.';
+                    errorMessageDiv.classList.remove('hidden');
+                    resultDiv.classList.add('hidden');
+                    return;
+                }
+            }
             
             if (isNaN(L) || isNaN(P_L) || isNaN(R_DH) || L <= 0 || P_L <= 0 || R_DH <= 0) {
                 resultDiv.classList.add('hidden');
@@ -1293,6 +1507,14 @@
             document.getElementById('language-select').value = defaultLang;
             changeLanguage(defaultLang);
             calculate();
+
+            // Ensure credit display is updated on load
+            firebase.auth().onAuthStateChanged(async (user) => {
+                if (user && window.creditManager) {
+                    await window.creditManager.ensureUserCredits(user);
+                    setupPayPalCreditButtons(user); // Setup PayPal buttons on login
+                }
+            });
         };
 
     </script>
@@ -1324,6 +1546,7 @@
             } else {
                 // User is logged in, display email
                 document.getElementById('userEmail').textContent = 'Logged in as: ' + user.email;
+                document.getElementById('authHeader').style.display = 'flex';
             }
         });
 
@@ -1337,6 +1560,12 @@
             });
         }
     </script>
+    
+    <!-- Credit Management Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    <script src="Scripts/firebase-init.js"></script>
+    <script src="Scripts/firebase-credits.js"></script>
+
 
     <!-- Footer -->
     <footer class="footer">
@@ -1398,3 +1627,4 @@
 
 </body>
 </html>
+
