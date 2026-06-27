@@ -5,6 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Gear Calculator</title>
     <link rel="stylesheet" href="../Styles/dashboard.css">
+    <style>
+        /* Floating Bot Icon Styles */
+        .floating-bot-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #6366f1, #818cf8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none;
+        }
+
+        .floating-bot-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .floating-bot-btn:active {
+            transform: translateY(0) scale(1);
+        }
+
+        .floating-bot-btn .bot-icon {
+            font-size: 30px;
+            animation: bot-wave 2.5s ease-in-out infinite;
+        }
+
+        @keyframes bot-wave {
+            0%, 100% {
+                transform: rotate(0deg);
+            }
+            10%, 30% {
+                transform: rotate(-10deg);
+            }
+            20%, 40% {
+                transform: rotate(10deg);
+            }
+            50% {
+                transform: rotate(0deg);
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="navbar">
@@ -109,6 +157,11 @@
             </div>
         </div>
     </div>
+
+    <!-- Floating Bot Button -->
+    <a href="http://localhost:5001" class="floating-bot-btn" title="Open XhaBot Assistant" target="_blank">
+        <span class="bot-icon">🤖</span>
+    </a>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
