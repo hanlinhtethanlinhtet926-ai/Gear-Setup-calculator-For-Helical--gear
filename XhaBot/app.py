@@ -7,19 +7,18 @@ from dotenv import load_dotenv
 # Load Environment Variables
 # =========================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ENV_PATH = os.path.join(BASE_DIR, "api.env")
+ENV_PATH = os.path.join(BASE_DIR, ".env")
 
-if load_dotenv(ENV_PATH):
-    print(f"[INFO] Loaded environment file: {ENV_PATH}")
-else:
-    print(f"[WARNING] Could not find: {ENV_PATH}")
+# Load .env file if it exists for local development
+load_dotenv(dotenv_path=ENV_PATH)
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 MODEL_NAME = os.getenv("MODEL_NAME", "google/gemma-4-26b-a4b-it:free")
 
 if not OPENROUTER_API_KEY:
     raise ValueError(
-        "OPENROUTER_API_KEY not found! Please check your api.env file."
+        "OPENROUTER_API_KEY not found! Please set it as an environment variable "
+        "or create a .env file in the project root."
     )
 
 # =========================
