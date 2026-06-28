@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('input[name="unitSystem"]').forEach(radio => {
         radio.addEventListener('change', updateUnitLabels);
     });
+    document.getElementById('exportPdfBtn').addEventListener('click', handleExportPdf);
     document.getElementById('threadCondition').addEventListener('change', (e) => {
         document.getElementById('customK').classList.toggle('hidden', e.target.value !== 'custom');
     });
@@ -120,6 +121,10 @@ function calculateTorque() {
     resultItems.forEach((item, index) => {
         item.style.animationDelay = `${index * 0.1}s`;
     });
+
+    // Show export button
+    const exportBtn = document.getElementById('exportPdfBtn');
+    exportBtn.style.display = 'block';
 }
 
 // --- UI Helper Functions ---
@@ -207,4 +212,89 @@ function createResultItem(label, value, unit, secondaryText = '') {
     }
 
     return item;
+}
+
+// --- PDF Export ---
+async function handleExportPdf() {
+    const exportBtn = document.getElementById('exportPdfBtn');
+    exportBtn.disabled = true;
+    exportBtn.classList.add('exporting');
+    exportBtn.textContent = 'Exporting...';
+
+    if (!currentUser) {
+        showError('You must be logged in to export.');
+        resetExportButton(exportBtn);
+        return;
+    }
+
+    try {
+        await window.creditManager.deductCredit(currentUser, 5);
+        generatePdf();
+        showError(''); // Clear any previous errors
+    } catch (error) {
+        showError(error.message || 'An error occurred while deducting credits for export.');
+    } finally {
+        resetExportButton(exportBtn);
+    }
+}
+
+function generatePdf() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const unitSystem = document.querySelector('input[name="unitSystem"]:checked').value;
+    const D = document.getElementById('diameter').value;
+    const F = document.getElementById('preload').value;
+    const threadConditionEl = document.getElementById('threadCondition');
+    const threadConditionText = threadConditionEl.options[threadConditionEl.selectedIndex].text;
+    let K = threadConditionEl.value;
+    if (K === 'custom') {
+        K = document.getElementById('customK').value;
+    }
+
+    const resultsDiv = document.getElementById('results-content');
+    if (!resultsDiv.children.length || resultsDiv.querySelector('.placeholder')) {
+        alert('Please perform a calculation first.');
+        return;
+    }
+
+    // --- PDF Content ---
+    doc.setFontSize(18);
+    doc.text('Bolt Torque Calculation Report', 14, 22);
+    doc.setFontSize(11);
+    doc.setTextColor(100);
+    doc.text(`Calculation Date: ${new Date().toLocaleDateString()}`, 14, 30);
+
+    let y = 45;
+
+    // Input Parameters
+    doc.setFontSize(12);
+    doc.text('Input Parameters:', 14, y);
+    y += 7;
+    doc.setFontSize(10);
+    doc.text(`- Unit System: ${unitSystem === 'metric' ? 'Metric' : 'Imperial'}`, 16, y); y += 6;
+    doc.text(`- Bolt Diameter (D): ${D} ${unitSystem === 'metric' ? 'mm' : 'in'}`, 16, y); y += 6;
+    doc.text(`- Target Preload (F): ${F} ${unitSystem === 'metric' ? 'kN' : 'lbs'}`, 16, y); y += 6;
+    doc.text(`- Thread Condition: ${threadConditionText} (K=${K})`, 16, y); y += 12;
+
+    // Results
+    doc.setFontSize(12);
+    doc.text('Calculation Results:', 14, y);
+    y += 7;
+    doc.setFontSize(10);
+    const resultItems = resultsDiv.querySelectorAll('.result-item');
+    resultItems.forEach(item => {
+        const label = item.querySelector('.result-label').textContent;
+        const value = item.querySelector('.result-value').textContent;
+        const unit = item.querySelector('.result-unit').textContent;
+        doc.text(`- ${label}: ${value} ${unit}`, 16, y); y += 6;
+    });
+
+    doc.save('Bolt-Torque-Report.pdf');
+}
+
+function resetExportButton(button) {
+    button.disabled = false;
+    button.classList.remove('exporting');
+    button.textContent = 'Export to PDF (5 Credits)';
 }
