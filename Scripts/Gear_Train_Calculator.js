@@ -1,196 +1,147 @@
-// Gear Train Calculator JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    let currentUser = null;
 
-class GearTrainCalculator {
-    constructor() {
-        this.form = document.getElementById('gearForm');
-        this.resultsDiv = document.getElementById('results');
-        this.setupEventListeners();
-    }
+    // --- Firebase Auth Listener ---
+    if (window.firebase && firebase.auth) {
+        firebase.auth().onAuthStateChanged(async (user) => {
+            const authBar = document.querySelector('.auth-bar');
+            const userDisplay = document.getElementById('user-display');
+            const authBtn = document.getElementById('auth-action-btn');
 
-    setupEventListeners() {
-        this.form.addEventListener('submit', (e) => this.handleSubmit(e));
-    }
+            if (user) {
+                currentUser = user;
+                authBar.style.display = 'flex';
+                userDisplay.textContent = `User: ${user.email}`;
+                authBtn.textContent = 'Sign Out';
+                authBtn.style.backgroundColor = 'var(--error-color)';
 
-    async handleSubmit(e) {
-        e.preventDefault();
-        try {
-            const inputSpeed = parseFloat(document.getElementById('inputSpeed').value);
-            const pinion1Teeth = parseFloat(document.getElementById('pinion1Teeth').value);
-            const gear1Teeth = parseFloat(document.getElementById('gear1Teeth').value);
-            const pinion2Teeth = document.getElementById('pinion2Teeth').value ? parseFloat(document.getElementById('pinion2Teeth').value) : null;
-            const gear2Teeth = document.getElementById('gear2Teeth').value ? parseFloat(document.getElementById('gear2Teeth').value) : null;
-            const pressureAngle = parseFloat(document.getElementById('pressureAngle').value);
-            const helixAngle = parseFloat(document.getElementById('helixAngle').value);
-
-            if (inputSpeed <= 0 || pinion1Teeth <= 0 || gear1Teeth <= 0 || pressureAngle < 0 || helixAngle < 0) {
-                throw new Error('All required values must be positive numbers');
-            }
-            // Validate optional inputs if they are provided
-            if ((pinion2Teeth !== null && pinion2Teeth <= 0) || (gear2Teeth !== null && gear2Teeth <= 0)) {
-                throw new Error('Optional gear teeth values, if provided, must be positive numbers.');
-            }
-
-            // Credit spending (auth/currentUser may be set by Gear_Train_Calculator.html)
-            if (window.creditManager) {
-                const user = firebase.auth().currentUser;
-                if (user) {
-                    await window.creditManager.deductCredit(user);
-                } else {
-                    throw new Error('Please login before calculating.');
+                try {
+                    await window.creditManager.ensureUserCredits(user);
+                } catch (error) {
+                    console.error('Credit load error:', error);
+                    window.creditManager.updateCreditsDisplay('Error');
                 }
+            } else {
+                currentUser = null;
+                // Redirect to login if not authenticated
+                window.location.href = 'login.html';
             }
-
-            // Pass all raw input values to calculateGearTrain
-            const results = this.calculateGearTrain(inputSpeed, pinion1Teeth, gear1Teeth, pinion2Teeth, gear2Teeth, pressureAngle, helixAngle); 
-            this.displayResults(results, { inputSpeed, pinion1Teeth, gear1Teeth, pinion2Teeth, gear2Teeth, pressureAngle, helixAngle });
-        } catch (error) {
-            this.displayError(error.message);
-        }
+        });
+    } else {
+        console.error("Firebase is not initialized.");
+        // Handle case where firebase is not available
+        document.querySelector('.container').innerHTML = "<h1>Error: Application services are unavailable.</h1>";
     }
 
-    calculateGearTrain(inputSpeed, pinion1Teeth, gear1Teeth, pinion2Teeth, gear2Teeth, pressureAngle, helixAngle) {
-        const results = {};
-    
-        // First stage calculations
-        const ratio1 = gear1Teeth / pinion1Teeth;
-        results.stage1Ratio = ratio1; // Keep as number
-        results.stage1OutputSpeed = (inputSpeed / ratio1); // Keep as number
-    
-        // Pitch calculations (assuming diametral pitch of 20)
-        const diametralPitch = 20;
-        results.pinion1PitchDiameter = (pinion1Teeth / diametralPitch); // Keep as number
-        results.gear1PitchDiameter = (gear1Teeth / diametralPitch); // Keep as number
-    
-        // Helical gear calculations
-        const normalPressureAngleRad = pressureAngle * Math.PI / 180;
-        const helixAngleRad = helixAngle * Math.PI / 180;
-        const transversePressureAngleRad = Math.atan(Math.tan(normalPressureAngleRad) / Math.cos(helixAngleRad));
-        results.transversePressureAngle = transversePressureAngleRad * 180 / Math.PI; // Keep as number
-    
-        // Center distance calculation (simplified)
-        const pinion1Radius = (pinion1Teeth / diametralPitch) / 2;
-        const gear1Radius = (gear1Teeth / diametralPitch) / 2;
-        results.centerDistance = pinion1Radius + gear1Radius; // Keep as number
-    
-        // Overall calculations
-        let overallRatioNumeric;
-        if (pinion2Teeth && gear2Teeth) {
-            const ratio2 = gear2Teeth / pinion2Teeth; // Keep as number
-            results.stage2Ratio = ratio2;
-            overallRatioNumeric = ratio1 * ratio2; // Keep as number
-            results.overallRatio = overallRatioNumeric;
-            results.finalOutputSpeed = (inputSpeed / overallRatioNumeric);
-    
-            results.pinion2PitchDiameter = (pinion2Teeth / diametralPitch); // Keep as number
-            results.gear2PitchDiameter = (gear2Teeth / diametralPitch); // Keep as number
-            results.centerDistance2 = (pinion2Teeth / diametralPitch) / 2 + (gear2Teeth / diametralPitch) / 2; // Keep as number
-        } else {
-            overallRatioNumeric = ratio1;
-            results.overallRatio = overallRatioNumeric; // Keep as number
-            results.finalOutputSpeed = (inputSpeed / overallRatioNumeric); // Keep as number
-        }
-    
-        // Power transmission (assuming 1 kW input)
-        results.torqueMultiplier = overallRatioNumeric; // Keep as number
-    
-        // Efficiency estimate (helical gears typically 98-99% per stage)
-        const stageCount = (pinion2Teeth && gear2Teeth) ? 2 : 1;
-        const efficiency = Math.pow(0.985, stageCount);
-        results.efficiency = efficiency * 100; // Keep as number
-    
-        return results;
-    }
+    // --- Form Submission ---
+    const gearForm = document.getElementById('gearForm');
+    gearForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        calculateGearTrain();
+    });
+});
 
-    displayResults(results, inputs) {
-        let html = '<div class="success">Calculation completed successfully!</div>';
-        
-        html += '<div class="result-item">';
-        html += '<div class="result-label">Input Speed</div>';
-        html += '<div class="result-value">' + inputs.inputSpeed.toFixed(2) + '<span class="result-unit">RPM</span></div>';
-        html += '</div>';
-
-        html += '<div class="result-item">';
-        html += '<div class="result-label">Stage 1 Gear Ratio</div>';
-        html += '<div class="result-value">' + results.stage1Ratio.toFixed(3) + '<span class="result-unit">:1</span></div>';
-        html += '</div>';
-
-        html += '<div class="result-item">';
-        html += '<div class="result-label">Stage 1 Output Speed</div>';
-        html += '<div class="result-value">' + results.stage1OutputSpeed.toFixed(2) + '<span class="result-unit">RPM</span></div>';
-        html += '</div>';
-
-        html += '<div class="result-item">';
-        html += '<div class="result-label">Pinion 1 Pitch Diameter</div>';
-        html += '<div class="result-value">' + results.pinion1PitchDiameter.toFixed(3) + '<span class="result-unit">in</span></div>';
-        html += '</div>';
-
-        html += '<div class="result-item">';
-        html += '<div class="result-label">Gear 1 Pitch Diameter</div>';
-        html += '<div class="result-value">' + results.gear1PitchDiameter.toFixed(3) + '<span class="result-unit">in</span></div>';
-        html += '</div>';
-
-        html += '<div class="result-item">';
-        html += '<div class="result-label">Center Distance (Stage 1)</div>';
-        html += '<div class="result-value">' + results.centerDistance.toFixed(3) + '<span class="result-unit">in</span></div>';
-        html += '</div>';
-
-        html += '<div class="result-item">';
-        html += '<div class="result-label">Transverse Pressure Angle</div>';
-        html += '<div class="result-value">' + results.transversePressureAngle.toFixed(2) + '<span class="result-unit">°</span></div>';
-        html += '</div>';
-
-        if (inputs.pinion2Teeth && inputs.gear2Teeth) {
-            html += '<div class="result-item">';
-            html += '<div class="result-label">Stage 2 Gear Ratio</div>';
-            html += '<div class="result-value">' + results.stage2Ratio.toFixed(3) + '<span class="result-unit">:1</span></div>';
-            html += '</div>';
-
-            html += '<div class="result-item">';
-            html += '<div class="result-label">Pinion 2 Pitch Diameter</div>';
-            html += '<div class="result-value">' + results.pinion2PitchDiameter.toFixed(3) + '<span class="result-unit">in</span></div>';
-            html += '</div>';
-
-            html += '<div class="result-item">';
-            html += '<div class="result-label">Gear 2 Pitch Diameter</div>';
-            html += '<div class="result-value">' + results.gear2PitchDiameter.toFixed(3) + '<span class="result-unit">in</span></div>';
-            html += '</div>';
-
-            html += '<div class="result-item">';
-            html += '<div class="result-label">Center Distance (Stage 2)</div>';
-            html += '<div class="result-value">' + results.centerDistance2.toFixed(3) + '<span class="result-unit">in</span></div>';
-            html += '</div>';
-        }
-
-        html += '<div class="result-item">';
-        html += '<div class="result-label">Overall Gear Ratio</div>';
-        html += '<div class="result-value">' + results.overallRatio.toFixed(3) + '<span class="result-unit">:1</span></div>';
-        html += '</div>';
-
-        html += '<div class="result-item">';
-        html += '<div class="result-label">Final Output Speed</div>';
-        html += '<div class="result-value">' + results.finalOutputSpeed.toFixed(2) + '<span class="result-unit">RPM</span></div>';
-        html += '</div>';
-
-        html += '<div class="result-item">';
-        html += '<div class="result-label">Torque Multiplier</div>';
-        html += '<div class="result-value">' + results.torqueMultiplier.toFixed(3) + '<span class="result-unit">×</span></div>';
-        html += '</div>';
-
-        html += '<div class="result-item">';
-        html += '<div class="result-label">System Efficiency</div>';
-        html += '<div class="result-value">' + results.efficiency.toFixed(1) + '<span class="result-unit">%</span></div>';
-        html += '</div>';
-
-        this.resultsDiv.innerHTML = html;
-    }
-
-    displayError(errorMessage) {
-        this.resultsDiv.innerHTML = '<div class="error">Error: ' + errorMessage + '</div>';
+// --- Auth Action ---
+function handleAuthAction() {
+    if (firebase.auth().currentUser) {
+        firebase.auth().signOut();
+    } else {
+        window.location.href = 'login.html';
     }
 }
 
-// Initialize calculator when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    new GearTrainCalculator();
-    console.log('Gear Train Calculator initialized');
-});
+// --- Calculation Logic ---
+function calculateGearTrain() {
+    const inputSpeed = parseFloat(document.getElementById('inputSpeed').value);
+    const z1 = parseFloat(document.getElementById('pinion1Teeth').value);
+    const z2 = parseFloat(document.getElementById('gear1Teeth').value);
+    const z3 = parseFloat(document.getElementById('pinion2Teeth').value);
+    const z4 = parseFloat(document.getElementById('gear2Teeth').value);
+
+    const resultsDiv = document.getElementById('results-content');
+    resultsDiv.innerHTML = ''; // Clear previous results
+
+    if (isNaN(inputSpeed) || isNaN(z1) || isNaN(z2)) {
+        resultsDiv.innerHTML = `<div class="error">Please fill in all required fields for Stage 1.</div>`;
+        return;
+    }
+
+    // Stage 1 calculations
+    const ratio1 = z2 / z1;
+    const outputSpeed1 = inputSpeed / ratio1;
+
+    let finalOutputSpeed = outputSpeed1;
+    let overallRatio = ratio1;
+    let efficiency = 0.985; // Efficiency for one stage
+
+    // Display Stage 1 results
+    resultsDiv.appendChild(createResultItem('Stage 1 Gear Ratio', ratio1.toFixed(3), ''));
+    resultsDiv.appendChild(createResultItem('Stage 1 Output Speed', outputSpeed1.toFixed(2), 'RPM'));
+
+    // Stage 2 calculations (if applicable)
+    const isTwoStage = !isNaN(z3) && !isNaN(z4) && z3 > 0 && z4 > 0;
+    if (isTwoStage) {
+        const ratio2 = z4 / z3;
+        const outputSpeed2 = outputSpeed1 / ratio2;
+
+        finalOutputSpeed = outputSpeed2;
+        overallRatio = ratio1 * ratio2;
+        efficiency = 0.985 * 0.985; // Compounded efficiency
+
+        resultsDiv.appendChild(createResultItem('Stage 2 Gear Ratio', ratio2.toFixed(3), ''));
+        resultsDiv.appendChild(createResultItem('Stage 2 Output Speed', outputSpeed2.toFixed(2), 'RPM'));
+    }
+
+    // Final results
+    const finalResultsHeader = document.createElement('h3');
+    finalResultsHeader.textContent = 'Overall System Performance';
+    finalResultsHeader.style.marginTop = '2rem';
+    finalResultsHeader.style.borderTop = '1px solid var(--border-color)';
+    finalResultsHeader.style.paddingTop = '1.5rem';
+    resultsDiv.appendChild(finalResultsHeader);
+
+    resultsDiv.appendChild(createResultItem('Overall Gear Ratio', overallRatio.toFixed(3), ''));
+    resultsDiv.appendChild(createResultItem('Final Output Speed', finalOutputSpeed.toFixed(2), 'RPM'));
+    resultsDiv.appendChild(createResultItem('Estimated Transmission Efficiency', (efficiency * 100).toFixed(2), '%'));
+
+    // Animate results
+    const resultItems = resultsDiv.querySelectorAll('.result-item');
+    resultItems.forEach((item, index) => {
+        item.style.animationDelay = `${index * 0.07}s`;
+    });
+}
+
+// --- UI Helper Function ---
+/**
+ * Creates a styled result item element.
+ * @param {string} label - The label for the result.
+ * @param {string} value - The calculated value.
+ * @param {string} unit - The unit for the value.
+ * @returns {HTMLElement} - The created result item div.
+ */
+function createResultItem(label, value, unit) {
+    const item = document.createElement('div');
+    item.className = 'result-item';
+
+    const labelEl = document.createElement('div');
+    labelEl.className = 'result-label';
+    labelEl.textContent = label;
+
+    const valueContainer = document.createElement('div');
+
+    const valueEl = document.createElement('span');
+    valueEl.className = 'result-value';
+    valueEl.textContent = value;
+
+    const unitEl = document.createElement('span');
+    unitEl.className = 'result-unit';
+    unitEl.textContent = unit;
+
+    valueContainer.appendChild(valueEl);
+    valueContainer.appendChild(unitEl);
+
+    item.appendChild(labelEl);
+    item.appendChild(valueContainer);
+
+    return item;
+}
