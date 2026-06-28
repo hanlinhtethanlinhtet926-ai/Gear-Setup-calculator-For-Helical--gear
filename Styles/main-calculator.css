@@ -1,0 +1,10 @@
+/* Add any specific styles for your main calculator page here */
+
+/* Example: Style for the export section */
+.export-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color, #e2e8f0);
+}
+
+/* The .btn-export styles are already defined in export-button.css */
