@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- Firebase Auth Listener ---
     if (window.firebase && firebase.auth) {
+        // Keep track of the user globally in this script
         firebase.auth().onAuthStateChanged(async (user) => {
             const authBar = document.querySelector('.auth-bar');
             const userDisplay = document.getElementById('user-display');
@@ -37,9 +38,32 @@ document.addEventListener('DOMContentLoaded', function() {
     const gearForm = document.getElementById('gearForm');
     gearForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        calculateGearTrain();
+        handleCalculationSubmit(e);
     });
+
+    // --- PDF Export Listener ---
+    document.getElementById('exportPdfBtn').addEventListener('click', handleExportPdf);
 });
+
+// --- Form Submission Handler ---
+async function handleCalculationSubmit(e) {
+    const calcButton = e.target.querySelector('.btn-calculate');
+    calcButton.disabled = true;
+    calcButton.textContent = 'Calculating...';
+
+    // In this calculator, calculation is free, so we don't deduct credits here.
+    // If calculation had a cost, credit deduction logic would go here.
+
+    try {
+        calculateGearTrain();
+    } catch (error) {
+        // Handle any unexpected calculation errors
+        console.error("Calculation failed:", error);
+    } finally {
+        calcButton.disabled = false;
+        calcButton.textContent = 'Calculate';
+    }
+}
 
 // --- Auth Action ---
 function handleAuthAction() {
@@ -109,6 +133,10 @@ function calculateGearTrain() {
     resultItems.forEach((item, index) => {
         item.style.animationDelay = `${index * 0.07}s`;
     });
+
+    // Show export button
+    const exportBtn = document.getElementById('exportPdfBtn');
+    exportBtn.style.display = 'block';
 }
 
 // --- UI Helper Function ---
@@ -144,4 +172,95 @@ function createResultItem(label, value, unit) {
     item.appendChild(valueContainer);
 
     return item;
+}
+
+// --- PDF Export ---
+async function handleExportPdf() {
+    const exportBtn = document.getElementById('exportPdfBtn');
+    exportBtn.disabled = true;
+    exportBtn.classList.add('exporting');
+    exportBtn.textContent = 'Exporting...';
+
+    const user = firebase.auth().currentUser;
+    if (!user) {
+        alert('You must be logged in to export.');
+        resetExportButton(exportBtn);
+        return;
+    }
+
+    try {
+        await window.creditManager.deductCredit(user, 5);
+        generatePdf();
+    } catch (error) {
+        alert(error.message || 'An error occurred while deducting credits for export.');
+    } finally {
+        resetExportButton(exportBtn);
+    }
+}
+
+function generatePdf() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const resultsDiv = document.getElementById('results-content');
+    if (!resultsDiv.children.length || resultsDiv.querySelector('.placeholder')) {
+        alert('Please perform a calculation first.');
+        return;
+    }
+
+    // --- PDF Content ---
+    doc.setFontSize(18);
+    doc.text('Gear Train Calculation Report', 14, 22);
+    doc.setFontSize(11);
+    doc.setTextColor(100);
+    doc.text(`Calculation Date: ${new Date().toLocaleDateString()}`, 14, 30);
+
+    let y = 45;
+
+    // Input Parameters
+    doc.setFontSize(12);
+    doc.text('Input Parameters:', 14, y);
+    y += 7;
+    doc.setFontSize(10);
+    doc.text(`- Input Speed: ${document.getElementById('inputSpeed').value} RPM`, 16, y); y += 6;
+    doc.text(`- Pinion 1: ${document.getElementById('pinion1Teeth').value} teeth`, 16, y); y += 6;
+    doc.text(`- Gear 1: ${document.getElementById('gear1Teeth').value} teeth`, 16, y); y += 6;
+
+    const z3 = document.getElementById('pinion2Teeth').value;
+    if (z3) {
+        doc.text(`- Pinion 2: ${z3} teeth`, 16, y); y += 6;
+        doc.text(`- Gear 2: ${document.getElementById('gear2Teeth').value} teeth`, 16, y); y += 6;
+    }
+    doc.text(`- Pressure Angle: ${document.getElementById('pressureAngle').value}°`, 16, y); y += 6;
+    doc.text(`- Helix Angle: ${document.getElementById('helixAngle').value}°`, 16, y); y += 12;
+
+
+    // Results
+    doc.setFontSize(12);
+    doc.text('Calculation Results:', 14, y);
+    y += 7;
+    doc.setFontSize(10);
+    const resultItems = resultsDiv.querySelectorAll('.result-item, h3');
+    resultItems.forEach(item => {
+        if (item.tagName === 'H3') {
+            y += 4; // Add some space before a header
+            doc.setFont(undefined, 'bold');
+            doc.text(item.textContent, 14, y);
+            doc.setFont(undefined, 'normal');
+            y += 7;
+        } else {
+            const label = item.querySelector('.result-label').textContent;
+            const value = item.querySelector('.result-value').textContent;
+            const unit = item.querySelector('.result-unit').textContent;
+            doc.text(`- ${label}: ${value} ${unit}`, 16, y); y += 6;
+        }
+    });
+
+    doc.save('Gear-Train-Report.pdf');
+}
+
+function resetExportButton(button) {
+    button.disabled = false;
+    button.classList.remove('exporting');
+    button.textContent = 'Export to PDF (5 Credits)';
 }
