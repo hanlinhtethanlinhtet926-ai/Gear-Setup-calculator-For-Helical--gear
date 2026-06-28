@@ -16,6 +16,10 @@
     <script src="../Scripts/firebase-init.js"></script>
     <script src="../Scripts/firebase-credits.js"></script>
     <link rel="stylesheet" href="../Styles/Gear_Train_Calculator.css">
+    <link rel="stylesheet" href="../Styles/export-button.css">
+
+    <!-- jsPDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -89,6 +93,9 @@
                     <div class="placeholder">
                         Enter parameters and click Calculate to see the analysis.
                     </div>
+                </div>
+                 <div class="export-section" style="margin-top: 1.5rem;">
+                    <button id="exportPdfBtn" class="btn-export" style="display: none;">Export to PDF (5 Credits)</button>
                 </div>
             </div>
         </div>
