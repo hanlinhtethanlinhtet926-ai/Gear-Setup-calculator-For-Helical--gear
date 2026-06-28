@@ -3,7 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gear Train Calculator</title>
+    <title>Helical Gear Train Calculator</title>
+    <link rel="icon" href="../Image/Gemini_Generated_Image_3wbe1r3wb (1).png">
+    <meta name="description" content="A professional tool to analyze and calculate parameters for single or multi-stage helical gear trains, including gear ratios, output speeds, and transmission efficiency.">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
+    <!-- Project Scripts -->
+    <script src="../Scripts/firebase-init.js"></script>
+    <script src="../Scripts/firebase-credits.js"></script>
     <link rel="stylesheet" href="../Styles/Gear_Train_Calculator.css">
 </head>
 <body>
@@ -26,87 +37,96 @@
             </ul>
         </div>
     </nav>
+
     <div class="container">
-        <div class="auth-bar" style="display: none;">
-            <span id="userEmail">Checking login...</span>
-            <span class="credit-pill">Credits: <span data-credit-balance>--</span></span>
-            <button type="button" id="logoutBtn">Logout</button>
+        <div class="auth-bar">
+            <span id="user-display">Verifying user...</span>
+            <span class="credit-pill">Credits: <strong data-credit-balance>0</strong></span>
+            <button id="auth-action-btn" onclick="handleAuthAction()">Sign In</button>
         </div>
+
         <h1>Helical Gear Train Calculator</h1>
+        <p class="subtitle">Analyze multi-stage gear trains for speed, ratio, and efficiency.</p>
+
         <div class="calculator-wrapper">
             <div class="input-section">
-                <h2>Input Parameters</h2>
                 <form id="gearForm">
                     <div class="form-group">
                         <label for="inputSpeed">Input Speed (RPM):</label>
                         <input type="number" id="inputSpeed" placeholder="e.g., 1000" required>
                     </div>
-                    <div class="form-group">
+
+                    <div class="stage-group">
+                        <h3>Stage 1</h3>
                         <label for="pinion1Teeth">Pinion 1 Teeth:</label>
                         <input type="number" id="pinion1Teeth" placeholder="e.g., 20" required>
-                    </div>
-                    <div class="form-group">
                         <label for="gear1Teeth">Gear 1 Teeth:</label>
                         <input type="number" id="gear1Teeth" placeholder="e.g., 80" required>
                     </div>
-                    <div class="form-group">
+
+                    <div class="stage-group">
+                        <h3>Stage 2 (Optional)</h3>
                         <label for="pinion2Teeth">Pinion 2 Teeth (optional):</label>
                         <input type="number" id="pinion2Teeth" placeholder="e.g., 25">
-                    </div>
-                    <div class="form-group">
                         <label for="gear2Teeth">Gear 2 Teeth (optional):</label>
                         <input type="number" id="gear2Teeth" placeholder="e.g., 75">
                     </div>
-                    <div class="form-group">
+
+                    <div class="shared-group">
+                        <h3>Gear Geometry</h3>
                         <label for="pressureAngle">Pressure Angle (degrees):</label>
                         <input type="number" id="pressureAngle" placeholder="e.g., 20" value="20" required>
-                    </div>
-                    <div class="form-group">
                         <label for="helixAngle">Helix Angle (degrees):</label>
                         <input type="number" id="helixAngle" placeholder="e.g., 15" value="15" required>
                     </div>
+
                     <button type="submit" class="btn-calculate">Calculate</button>
                 </form>
             </div>
             <div class="results-section">
                 <h2>Results</h2>
-                <div id="results" class="results-content">
-                    <p class="placeholder">Enter values and click Calculate to see results</p>
+                <div id="results-content" class="results-content">
+                    <div class="placeholder">
+                        Enter parameters and click Calculate to see the analysis.
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
-    <script src="../Scripts/firebase-init.js"></script>
-    <script src="../Scripts/firebase-credits.js"></script>
-    <script>
-        const auth = firebase.auth();
 
-        auth.onAuthStateChanged(async (user) => {
-            const authBar = document.querySelector('.auth-bar');
-            if (!user) {
-                authBar.style.display = 'none';
-                window.location.href = 'login.html';
-                return;
-            }
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Calculator</h3>
+                <a href="../index.html">Helical Gear Tool</a>
+                <a href="guide.html">Quick Guide</a>
+                <a href="#">Formula Reference</a>
+            </div>
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <a href="about.html">About Us</a>
+                <a href="#">Documentation</a>
+                <a href="#">FAQ</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="#">Contact Us</a>
+                <a href="#">Report Issue</a>
+                <a href="#">Feedback</a>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">License</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Helical Gear Calculator. All rights reserved. | Built with ❤️ for engineers</p>
+        </div>
+    </footer>
 
-            document.getElementById('userEmail').textContent = 'Logged in as: ' + user.email;
-            authBar.style.display = 'flex';
-            try {
-                await window.creditManager.ensureUserCredits(user);
-            } catch (error) {
-                console.error('Credit load error:', error);
-            }
-        });
-
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            auth.signOut().then(() => {
-                window.location.href = 'login.html';
-            });
-        });
-    </script>
     <script src="../Scripts/Gear_Train_Calculator.js"></script>
 </body>
 </html>
