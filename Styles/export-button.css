@@ -1,0 +1,48 @@
+/* --- Export to PDF Button --- */
+.btn-export {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-position 0.4s ease, transform 0.15s ease, box-shadow 0.25s ease, opacity 0.3s;
+    background: linear-gradient(135deg, #10b981 0%, #14b8a6 50%, #10b981 100%);
+    background-size: 200% auto;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+}
+
+.btn-export:hover:not(:disabled) {
+    background-position: right center;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.btn-export:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.btn-export:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: #9ca3af; /* Gray color when disabled */
+    box-shadow: none;
+}
+
+/* Spinner for exporting state */
+.btn-export.exporting::before {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-right: 10px;
+    vertical-align: middle;
+}
