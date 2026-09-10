@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For You ❤️</title>
+  <style>
+    /* Reset & Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #0d0a18, #2a0826, #420826);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+      color: #fff;
+    }
+
+    /* Container Box */
+    .card {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 3rem 2.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5),
+                  0 0 30px rgba(255, 105, 180, 0.2);
+      max-width: 420px;
+      width: 90%;
+      animation: fadeIn 1.5s ease-out;
+    }
+
+    /* Pulsing Heart Icon */
+    .heart-icon {
+      font-size: 5rem;
+      color: #ff3366;
+      margin-bottom: 1rem;
+      display: inline-block;
+      animation: beat 1.2s infinite ease-in-out;
+      text-shadow: 0 0 20px rgba(255, 51, 102, 0.8),
+                  0 0 40px rgba(255, 51, 102, 0.4);
+    }
+
+    /* Message Styling */
+    h1 {
+      font-size: 2.8rem;
+      font-family: 'Georgia', serif;
+      background: linear-gradient(45deg, #ff9a9e, #fecfef, #feada6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 25px rgba(255, 154, 158, 0.3);
+    }
+
+    p {
+      font-size: 1.1rem;
+      color: #e0e0e0;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      font-weight: 300;
+    }
+
+    /* Interactive Surprise Button */
+    .btn {
+      padding: 0.8rem 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      background: linear-gradient(45deg, #ff3366, #ff6b8b);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(255, 51, 102, 0.4);
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 12px 25px rgba(255, 51, 102, 0.6);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    /* Hidden Message Revealed on Click */
+    .hidden-message {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-top: 0;
+      font-style: italic;
+      color: #ffd1dc;
+    }
+
+    .hidden-message.show {
+      max-height: 150px;
+      opacity: 1;
+      margin-top: 1.5rem;
+    }
+
+    /* Keyframe Animations */
+    @keyframes beat {
+      0%, 100% { transform: scale(1); }
+      15% { transform: scale(1.25); }
+      30% { transform: scale(1); }
+      45% { transform: scale(1.15); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Floating Background Hearts */
+    .floating-heart {
+      position: absolute;
+      bottom: -50px;
+      color: rgba(255, 105, 180, 0.3);
+      user-select: none;
+      pointer-events: none;
+      z-index: 1;
+      animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) rotate(0deg) scale(0.8);
+        opacity: 0;
+      }
+      20% { opacity: 0.6; }
+      80% { opacity: 0.6; }
+      100% {
+        transform: translateY(-110vh) rotate(360deg) scale(1.2);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Heart Background Elements -->
+  <div class="background-hearts" id="heartsContainer"></div>
+
+  <!-- Main Romantic Card -->
+  <div class="card">
+    <div class="heart-icon">❤️</div>
+    <h1>I Love You</h1>
+    <p>You make every single day brighter, sweeter, and infinitely more beautiful.</p>
+    
+    <button class="btn" onclick="revealMessage()">Click For A Surprise ✨</button>
+    
+    <div class="hidden-message" id="extraMessage">
+      "In all the world, there is no heart for me like yours. In all the world, there is no love for you like mine." 💖
+    </div>
+  </div>
+
+  <script>
+    // Create floating hearts dynamically
+    const heartsContainer = document.getElementById('heartsContainer');
+    const heartSymbols = ['❤️', '💖', '💕', '💗', '✨'];
+
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('floating-heart');
+      
+      // Random heart symbol
+      heart.innerText = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+      
+      // Random positioning & sizing
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.animationDuration = (Math.random() * 4 + 6) + 's'; // 6s to 10s
+      heart.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+      
+      heartsContainer.appendChild(heart);
+
+      // Remove element after animation ends
+      setTimeout(() => {
+        heart.remove();
+      }, 10000);
+    }
+
+    // Generate hearts continuously
+    setInterval(createHeart, 400);
+
+    // Button click action
+    function revealMessage() {
+      const msg = document.getElementById('extraMessage');
+      msg.classList.toggle('show');
+      
+      // Burst extra hearts on click
+      for(let i = 0; i < 8; i++) {
+        setTimeout(createHeart, i * 50);
+      }
+    }
+  </script>
+</body>
+</html>
